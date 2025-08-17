@@ -1,8 +1,8 @@
 # Minimal Home - Responsive Dashboard
 
-![Minimal Home Dashboard Preview](https://i.ibb.co/RGRGkDpw/arsynox.jpg)
-
 A clean, minimal, and responsive homepage/dashboard that serves as your personal productivity hub with search capabilities, AI tools access, and productivity features.
+
+![Minimal Home Dashboard Preview](https://i.ibb.co/RGRGkDpw/arsynox.jpg)
 
 ## 🌟 Features
 
