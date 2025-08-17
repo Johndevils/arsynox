@@ -2,7 +2,7 @@
 
 A clean, minimal, and responsive homepage/dashboard that serves as your personal productivity hub with search capabilities, AI tools access, and productivity features.
 
-![Minimal Home Dashboard Preview](https://i.ibb.co/RGRGkDpw/arsynox.jpg)
+![Minimal Home Dashboard Preview](https://i.ibb.co/MxyC49mt/arsynox.jpg)
 
 ## 🌟 Features
 
