@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Minimal Home</title>
-    <h1>Arsynox</h1>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         /* ===== RESET & BASE STYLES ===== */
@@ -160,6 +159,14 @@
             color: var(--accent-primary);
             box-shadow: 0 0 0 3px rgba(106, 76, 147, 0.2);
             transform: translateY(-3px);
+        }
+
+        /* Custom letter icons for Netlify (N) and Vercel (V) */
+        .letter-icon {
+            font-family: 'Inter', sans-serif;
+            font-weight: 700;
+            font-size: 1.5rem;
+            line-height: 1;
         }
 
         /* ===== PRODUCTIVITY SECTION ===== */
@@ -429,6 +436,7 @@
         .container > *:nth-child(3) { animation-delay: 0.3s; }
         .container > *:nth-child(4) { animation-delay: 0.4s; }
         .container > *:nth-child(5) { animation-delay: 0.5s; }
+        .container > *:nth-child(6) { animation-delay: 0.6s; }
 
         /* ===== FOOTER ===== */
         footer {
@@ -506,8 +514,17 @@
                     </div>
                 </div>
                 <div class="icon-container">
-                    <div class="icon" data-tool="google-ai" data-url="https://aistudio.google.com/prompts/new_chat">
+                    <div class="icon" data-tool="google-ai" data-url="https://aistudio.google.com">
                         <i class="fas fa-robot"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Social Media Tools -->
+            <div class="icon-bar" id="socialTools">
+                <div class="icon-container">
+                    <div class="icon" data-tool="threads" data-url="https://thread-profile-viewer.onrender.com/">
+                        <i class="fab fa-thread"></i>
                     </div>
                 </div>
             </div>
@@ -526,12 +543,12 @@
                 </div>
                 <div class="icon-container">
                     <div class="icon" data-platform="vercel" data-url="https://vercel.com/dashboard">
-                        <i class="fas fa-deploydog"></i>
+                        <span class="letter-icon">V</span>
                     </div>
                 </div>
                 <div class="icon-container">
                     <div class="icon" data-platform="netlify" data-url="https://app.netlify.com">
-                        <i class="fab fa-netlify"></i>
+                        <span class="letter-icon">N</span>
                     </div>
                 </div>
                 <div class="icon-container">
@@ -772,9 +789,9 @@
             updateClock();
             setInterval(updateClock, 1000);
             
-            // ===== AI TOOLS & CLOUD PLATFORMS =====
+            // ===== AI TOOLS, SOCIAL TOOLS & CLOUD PLATFORMS =====
             // Add click handlers for opening URLs
-            document.querySelectorAll('#aiTools .icon, #cloudPlatforms .icon').forEach(icon => {
+            document.querySelectorAll('#aiTools .icon, #socialTools .icon, #cloudPlatforms .icon').forEach(icon => {
                 icon.addEventListener('click', function() {
                     // Visual feedback
                     this.style.transform = 'scale(0.95)';
