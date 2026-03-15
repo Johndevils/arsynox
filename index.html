@@ -3,810 +3,423 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Minimal Home</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Kira Home</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
-        /* ===== RESET & BASE STYLES ===== */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        *, *::before, *::after { margin:0;padding:0;box-sizing:border-box; }
         :root {
-            /* Pastel color palette */
-            --bg-primary: #f8f9fa;
-            --bg-secondary: #ffffff;
-            --accent-primary: #6a4c93;
-            --accent-secondary: #4cc9f0;
-            --text-primary: #212529;
-            --text-secondary: #6c757d;
-            --border: #e0e0e0;
-            --success: #a7c5bd;
-            --danger: #f0c987;
-            
-            /* Shadows */
-            --shadow-sm: 0 2px 8px rgba(106, 76, 147, 0.1);
-            --shadow-md: 0 4px 12px rgba(106, 76, 147, 0.15);
-            --shadow-lg: 0 8px 24px rgba(106, 76, 147, 0.2);
-            
-            /* Spacing */
-            --spacing-xs: 0.5rem;
-            --spacing-sm: 1rem;
-            --spacing-md: 1.5rem;
-            --spacing-lg: 2.5rem;
-            --spacing-xl: 4rem;
-            
-            /* Borders */
-            --radius-sm: 8px;
-            --radius-md: 12px;
-            --radius-lg: 16px;
-            
-            /* Transitions */
-            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            --accent:#C15F3C; --accent-glow:rgba(193,95,60,0.35); --accent-soft:rgba(193,95,60,0.12);
+            --muted-soft:rgba(177,173,161,0.15);
+            --bg:#0a0a0f; --surface:rgba(255,255,255,0.045); --surface-hover:rgba(255,255,255,0.075);
+            --border:rgba(255,255,255,0.08); --border-accent:rgba(193,95,60,0.3);
+            --text-1:#f0ede8; --text-2:#9a9690; --text-3:#5a5652;
+            --glass-blur:blur(18px) saturate(180%);
+            --radius-sm:10px; --radius-md:16px; --radius-lg:22px; --radius-xl:32px;
+            --ease-spring:cubic-bezier(0.34,1.56,0.64,1); --ease-out:cubic-bezier(0.16,1,0.3,1);
         }
-
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
-            line-height: 1.6;
-            min-height: 100vh;
-            padding: var(--spacing-md);
-            transition: var(--transition);
-        }
-
-        /* ===== LAYOUT ===== */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            flex-direction: column;
-            gap: var(--spacing-lg);
-            min-height: 100vh;
-        }
-
-        /* ===== HEADER SECTION ===== */
-        .header {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: var(--spacing-md);
-            margin-top: var(--spacing-xl);
-            flex: 1;
-        }
-
-        /* ===== SEARCH BAR ===== */
-        .search-container {
-            width: 100%;
-            max-width: 700px;
-            position: relative;
-            z-index: 10;
-        }
-
-        .search-form {
-            display: flex;
-            width: 100%;
-        }
-
-        .search-input {
-            flex: 1;
-            padding: 1.25rem 1.5rem;
-            border: 2px solid var(--border);
-            border-radius: var(--radius-lg);
-            font-size: 1.1rem;
-            background-color: var(--bg-secondary);
-            color: var(--text-primary);
-            box-shadow: var(--shadow-sm);
-            transition: var(--transition);
-            outline: none;
-        }
-
-        .search-input:focus {
-            border-color: var(--accent-primary);
-            box-shadow: 0 0 0 3px rgba(106, 76, 147, 0.2);
-        }
-
-        .search-input::placeholder {
-            color: var(--text-secondary);
-        }
-
-        /* ===== ICON BARS ===== */
-        .icon-bar {
-            display: flex;
-            justify-content: center;
-            gap: var(--spacing-md);
-            width: 100%;
-            padding: var(--spacing-sm) 0;
-            overflow-x: auto;
-            scrollbar-width: none; /* Firefox */
-        }
-
-        .icon-bar::-webkit-scrollbar {
-            display: none; /* Chrome, Safari, Opera */
-        }
-
-        .icon-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: var(--spacing-xs);
-        }
-
-        .icon {
-            width: 50px;
-            height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            background-color: var(--bg-secondary);
-            color: var(--text-secondary);
-            font-size: 1.4rem;
-            cursor: pointer;
-            transition: var(--transition);
-            box-shadow: var(--shadow-sm);
-            flex-shrink: 0;
-        }
-
-        .icon:hover {
-            transform: translateY(-3px);
-            color: var(--accent-primary);
-            box-shadow: var(--shadow-md);
-        }
-
-        .icon.active {
-            color: var(--accent-primary);
-            box-shadow: 0 0 0 3px rgba(106, 76, 147, 0.2);
-            transform: translateY(-3px);
-        }
-
-        /* Custom letter icons for Netlify (N) and Vercel (V) */
-        .letter-icon {
-            font-family: 'Inter', sans-serif;
-            font-weight: 700;
-            font-size: 1.5rem;
-            line-height: 1;
-        }
-
-        /* ===== PRODUCTIVITY SECTION ===== */
-        .productivity {
-            display: flex;
-            flex-direction: column;
-            gap: var(--spacing-md);
-            margin-top: auto;
-            padding-bottom: var(--spacing-md);
-        }
-
-        .todo-clock-container {
-            display: flex;
-            flex-direction: column;
-            gap: var(--spacing-md);
-        }
-
-        @media (min-width: 768px) {
-            .todo-clock-container {
-                flex-direction: row;
-                gap: var(--spacing-lg);
+        @media (prefers-color-scheme:light) {
+            :root {
+                --bg:#f2ede8; --surface:rgba(255,255,255,0.6); --surface-hover:rgba(255,255,255,0.85);
+                --border:rgba(0,0,0,0.08); --text-1:#1a1714; --text-2:#6b6560; --text-3:#a09890;
             }
         }
-
-        /* ===== TODO LIST ===== */
-        .todo-container {
-            background: var(--bg-secondary);
-            border-radius: var(--radius-lg);
-            padding: var(--spacing-md);
-            box-shadow: var(--shadow-sm);
-            flex: 1;
-            min-width: 0;
-        }
-
-        .todo-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: var(--spacing-sm);
-        }
-
-        .todo-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .todo-input {
-            display: flex;
-            gap: var(--spacing-xs);
-            margin-bottom: var(--spacing-sm);
-        }
-
-        .todo-input input {
-            flex: 1;
-            padding: 0.75rem 1rem;
-            border: 1px solid var(--border);
-            border-radius: var(--radius-sm);
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
-            outline: none;
-            transition: var(--transition);
-        }
-
-        .todo-input input:focus {
-            border-color: var(--accent-secondary);
-        }
-
-        .add-btn {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background-color: var(--accent-secondary);
-            color: white;
-            border: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: var(--transition);
-            flex-shrink: 0;
-        }
-
-        .add-btn:hover {
-            background-color: #3ab0e0;
-            transform: scale(1.05);
-        }
-
-        .todo-list {
-            list-style: none;
-            max-height: 200px;
-            overflow-y: auto;
-        }
-
-        .todo-list::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .todo-list::-webkit-scrollbar-track {
-            background: var(--bg-primary);
-            border-radius: 3px;
-        }
-
-        .todo-list::-webkit-scrollbar-thumb {
-            background: var(--border);
-            border-radius: 3px;
-        }
-
-        .todo-item {
-            display: flex;
-            align-items: center;
-            padding: 0.75rem 0;
-            border-bottom: 1px solid var(--border);
-            transition: var(--transition);
-        }
-
-        .todo-item:last-child {
-            border-bottom: none;
-        }
-
-        .todo-checkbox {
-            width: 20px;
-            height: 20px;
-            border: 2px solid var(--border);
-            border-radius: 4px;
-            margin-right: var(--spacing-sm);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: var(--transition);
-            flex-shrink: 0;
-        }
-
-        .todo-checkbox.checked {
-            background-color: var(--accent-secondary);
-            border-color: var(--accent-secondary);
-        }
-
-        .todo-checkbox.checked::after {
-            content: "\f00c";
-            font-family: "Font Awesome 6 Free";
-            font-weight: 900;
-            color: white;
-            font-size: 0.6rem;
-        }
-
-        .todo-text {
-            flex: 1;
-            transition: var(--transition);
-        }
-
-        .todo-item.completed .todo-text {
-            text-decoration: line-through;
-            color: var(--text-secondary);
-        }
-
-        .delete-btn {
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            background-color: var(--bg-primary);
-            color: var(--text-secondary);
-            border: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: var(--transition);
-            flex-shrink: 0;
-        }
-
-        .delete-btn:hover {
-            background-color: #ffebee;
-            color: #f44336;
-        }
-
-        /* ===== CLOCK SECTION ===== */
-        .clock-container {
-            background: var(--bg-secondary);
-            border-radius: var(--radius-lg);
-            padding: var(--spacing-md);
-            box-shadow: var(--shadow-sm);
-            text-align: center;
-            flex: 1;
-        }
-
-        .clock {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--accent-primary);
-            margin: var(--spacing-sm) 0;
-            font-variant-numeric: tabular-nums;
-        }
-
-        .date {
-            font-size: 1.25rem;
-            color: var(--text-secondary);
-            font-weight: 500;
-        }
-
-        /* ===== RESPONSIVE ===== */
-        @media (max-width: 768px) {
-            .header {
-                margin-top: var(--spacing-md);
-            }
-            
-            .search-input {
-                padding: 1rem 1.25rem;
-                font-size: 1rem;
-            }
-            
-            .icon {
-                width: 44px;
-                height: 44px;
-                font-size: 1.2rem;
-            }
-            
-            .clock {
-                font-size: 2rem;
-            }
-            
-            .date {
-                font-size: 1.25rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .search-input {
-                padding: 0.85rem 1rem;
-                font-size: 0.95rem;
-            }
-            
-            .icon {
-                width: 40px;
-                height: 40px;
-                font-size: 1.1rem;
-            }
-            
-            .clock {
-                font-size: 1.75rem;
-            }
-            
-            .date {
-                font-size: 0.9rem;
-            }
-            
-            .add-btn {
-                width: 36px;
-                height: 36px;
-            }
-        }
-
-        /* ===== ANIMATIONS ===== */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .container > * {
-            animation: fadeIn 0.5s ease-out forwards;
-            opacity: 0;
-        }
-
-        .container > *:nth-child(1) { animation-delay: 0.1s; }
-        .container > *:nth-child(2) { animation-delay: 0.2s; }
-        .container > *:nth-child(3) { animation-delay: 0.3s; }
-        .container > *:nth-child(4) { animation-delay: 0.4s; }
-        .container > *:nth-child(5) { animation-delay: 0.5s; }
-        .container > *:nth-child(6) { animation-delay: 0.6s; }
-
-        /* ===== FOOTER ===== */
-        footer {
-            text-align: center;
-            color: var(--text-secondary);
-            font-size: 0.875rem;
-            padding-top: var(--spacing-md);
-            margin-top: auto;
-        }
+        html{height:100%}
+        body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-1);min-height:100vh;overflow-x:hidden;}
+        /* BG */
+        .bg-mesh{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none;}
+        .mesh-orb{position:absolute;border-radius:50%;filter:blur(80px);opacity:0.18;animation:orbFloat 20s ease-in-out infinite;}
+        @media(prefers-color-scheme:light){.mesh-orb{opacity:0.22;}}
+        .orb-1{width:600px;height:600px;background:radial-gradient(circle,#C15F3C,transparent 70%);top:-15%;left:-10%;animation-duration:25s;}
+        .orb-2{width:500px;height:500px;background:radial-gradient(circle,#7c4a8a,transparent 70%);top:20%;right:-15%;animation-duration:30s;animation-delay:-8s;}
+        .orb-3{width:400px;height:400px;background:radial-gradient(circle,#3c6ec1,transparent 70%);bottom:10%;left:30%;animation-duration:22s;animation-delay:-15s;}
+        @keyframes orbFloat{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(40px,-30px) scale(1.05)}66%{transform:translate(-20px,40px) scale(0.95)}}
+        /* LAYOUT */
+        .page{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:0 24px 40px;}
+        /* HEADER */
+        .site-header{width:100%;max-width:860px;display:flex;justify-content:space-between;align-items:center;padding:28px 0 0;opacity:0;animation:slideDown 0.6s var(--ease-out) 0.1s forwards;}
+        .brand{font-family:'Syne',sans-serif;font-weight:800;font-size:1.05rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--accent);}
+        .header-right{display:flex;flex-direction:column;align-items:flex-end;gap:2px;}
+        .header-time{font-family:'DM Mono',monospace;font-size:0.88rem;color:var(--text-2);letter-spacing:0.05em;}
+        .header-date{font-family:'DM Sans',sans-serif;font-size:0.72rem;color:var(--text-3);}
+        /* HERO */
+        .hero{width:100%;max-width:720px;margin-top:clamp(60px,10vh,120px);display:flex;flex-direction:column;align-items:center;gap:28px;opacity:0;animation:fadeUp 0.7s var(--ease-out) 0.25s forwards;}
+        .hero-greeting{font-family:'Syne',sans-serif;font-size:clamp(1.8rem,4vw,2.8rem);font-weight:700;text-align:center;line-height:1.15;}
+        .hero-greeting span{color:var(--accent);}
+        /* SEARCH */
+        .search-wrap{width:100%;position:relative;}
+        .search-glass{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-xl);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);display:flex;align-items:center;padding:6px 6px 6px 18px;gap:12px;transition:border-color 0.25s,box-shadow 0.25s;}
+        .search-glass:focus-within{border-color:var(--border-accent);box-shadow:0 0 0 3px var(--accent-soft),0 8px 32px rgba(0,0,0,0.3);}
+        .search-engine-icon{flex-shrink:0;width:20px;height:20px;display:flex;align-items:center;justify-content:center;color:var(--accent);}
+        .search-engine-icon svg{width:18px;height:18px;}
+        #searchInput{flex:1;background:transparent;border:none;outline:none;font-family:'DM Sans',sans-serif;font-size:1.05rem;color:var(--text-1);padding:14px 0;caret-color:var(--accent);}
+        #searchInput::placeholder{color:var(--text-3);}
+        .search-submit{width:46px;height:46px;border-radius:calc(var(--radius-xl) - 8px);background:var(--accent);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;flex-shrink:0;transition:transform 0.2s var(--ease-spring),box-shadow 0.2s;}
+        .search-submit:hover{transform:scale(1.08);box-shadow:0 4px 20px var(--accent-glow);}
+        .search-submit svg{width:18px;height:18px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;}
+        /* ENGINE CHIPS */
+        .engine-row{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;}
+        .engine-chip{display:flex;align-items:center;gap:7px;padding:7px 14px;border-radius:999px;background:var(--surface);border:1px solid var(--border);color:var(--text-2);font-family:'DM Sans',sans-serif;font-size:0.78rem;font-weight:500;cursor:pointer;backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);transition:all 0.2s var(--ease-out);white-space:nowrap;}
+        .engine-chip:hover{background:var(--surface-hover);color:var(--text-1);}
+        .engine-chip.active{background:var(--accent-soft);border-color:var(--border-accent);color:var(--accent);}
+        .engine-chip svg{width:14px;height:14px;flex-shrink:0;}
+        /* SHORTCUTS */
+        .shortcuts-section{width:100%;max-width:860px;margin-top:48px;opacity:0;animation:fadeUp 0.7s var(--ease-out) 0.45s forwards;}
+        .section-label{font-family:'DM Mono',monospace;font-size:0.68rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-3);margin-bottom:14px;padding-left:2px;}
+        .shortcut-group{display:flex;gap:8px;flex-wrap:wrap;}
+        .shortcut-btn{display:flex;align-items:center;gap:9px;padding:10px 16px;border-radius:var(--radius-md);background:var(--surface);border:1px solid var(--border);color:var(--text-2);font-family:'DM Sans',sans-serif;font-size:0.82rem;font-weight:500;cursor:pointer;text-decoration:none;backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);transition:all 0.2s var(--ease-out);position:relative;overflow:hidden;}
+        .shortcut-btn::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,var(--accent-soft),transparent);opacity:0;transition:opacity 0.2s;}
+        .shortcut-btn:hover{background:var(--surface-hover);border-color:var(--border-accent);color:var(--text-1);transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,0.25);}
+        .shortcut-btn:hover::before{opacity:1;}
+        .shortcut-btn:active{transform:scale(0.97) translateY(0);}
+        .s-ico{width:16px;height:16px;flex-shrink:0;position:relative;z-index:1;display:flex;align-items:center;justify-content:center;color:var(--accent);}
+        .s-ico svg{width:15px;height:15px;}
+        .s-lbl{position:relative;z-index:1;}
+        .s-letter{font-family:'Syne',sans-serif;font-weight:800;font-size:0.95rem;color:var(--accent);position:relative;z-index:1;width:16px;text-align:center;}
+        .group-divider{width:1px;align-self:stretch;background:var(--border);margin:0 4px;}
+        /* PRODUCTIVITY */
+        .productivity{width:100%;max-width:860px;margin-top:24px;display:grid;grid-template-columns:1fr 1fr;gap:16px;opacity:0;animation:fadeUp 0.7s var(--ease-out) 0.6s forwards;}
+        @media(max-width:600px){.productivity{grid-template-columns:1fr;}}
+        .glass-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);padding:22px;position:relative;overflow:hidden;}
+        .glass-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.12),transparent);}
+        /* CLOCK */
+        .clock-card{display:flex;flex-direction:column;justify-content:center;align-items:flex-start;gap:4px;}
+        .clock-label{font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--text-3);}
+        #clock{font-family:'DM Mono',monospace;font-size:clamp(2rem,4vw,2.8rem);font-weight:500;color:var(--text-1);letter-spacing:0.02em;line-height:1;margin:8px 0 6px;}
+        #clock .colon{color:var(--accent);animation:blink 1s step-end infinite;}
+        @keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+        #date-display{font-size:0.82rem;color:var(--text-2);}
+        /* TODO */
+        .todo-card{display:flex;flex-direction:column;gap:14px;}
+        .card-header{display:flex;justify-content:space-between;align-items:center;}
+        .card-title{font-family:'Syne',sans-serif;font-size:0.9rem;font-weight:700;letter-spacing:0.05em;color:var(--text-1);text-transform:uppercase;}
+        .todo-count{font-family:'DM Mono',monospace;font-size:0.7rem;color:var(--text-3);background:var(--muted-soft);padding:2px 8px;border-radius:999px;}
+        .todo-input-row{display:flex;gap:8px;}
+        .todo-input-row input{flex:1;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:var(--radius-sm);padding:9px 13px;font-family:'DM Sans',sans-serif;font-size:0.85rem;color:var(--text-1);outline:none;transition:border-color 0.2s,box-shadow 0.2s;}
+        @media(prefers-color-scheme:light){.todo-input-row input{background:rgba(0,0,0,0.04);}}
+        .todo-input-row input:focus{border-color:var(--border-accent);box-shadow:0 0 0 2px var(--accent-soft);}
+        .todo-input-row input::placeholder{color:var(--text-3);}
+        .todo-add-btn{width:36px;height:36px;border-radius:var(--radius-sm);background:var(--accent);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;flex-shrink:0;transition:transform 0.2s var(--ease-spring),box-shadow 0.2s;}
+        .todo-add-btn:hover{transform:scale(1.1);box-shadow:0 4px 16px var(--accent-glow);}
+        .todo-add-btn svg{width:16px;height:16px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;}
+        .todo-list{list-style:none;max-height:160px;overflow-y:auto;display:flex;flex-direction:column;gap:4px;}
+        .todo-list::-webkit-scrollbar{width:4px;}
+        .todo-list::-webkit-scrollbar-track{background:transparent;}
+        .todo-list::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+        .todo-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:var(--radius-sm);transition:background 0.15s;}
+        .todo-item:hover{background:var(--surface-hover);}
+        .todo-check{width:18px;height:18px;border-radius:5px;border:1.5px solid var(--border);flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s var(--ease-spring);}
+        .todo-check.done{background:var(--accent);border-color:var(--accent);}
+        .todo-check.done::after{content:'';width:5px;height:9px;border:2px solid #fff;border-top:none;border-left:none;transform:rotate(45deg) translateY(-1px);display:block;}
+        .todo-text{flex:1;font-size:0.83rem;color:var(--text-2);transition:all 0.2s;}
+        .todo-item.done .todo-text{text-decoration:line-through;color:var(--text-3);}
+        .todo-del{width:22px;height:22px;border-radius:5px;background:transparent;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text-3);opacity:0;transition:all 0.15s;}
+        .todo-item:hover .todo-del{opacity:1;}
+        .todo-del:hover{background:rgba(255,80,80,0.12);color:#ff6060;}
+        .todo-del svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;}
+        .todo-empty{font-size:0.8rem;color:var(--text-3);text-align:center;padding:16px 0;font-style:italic;}
+        /* FOOTER */
+        .site-footer{margin-top:auto;padding-top:40px;font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.1em;color:var(--text-3);text-transform:uppercase;opacity:0;animation:fadeUp 0.6s var(--ease-out) 0.8s forwards;}
+        @keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+        @keyframes slideDown{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:translateY(0)}}
+        ::selection{background:var(--accent-soft);color:var(--accent);}
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Search Section -->
-        <section class="header">
-            <div class="search-container">
-                <form class="search-form" id="searchForm">
-                    <input 
-                        type="text" 
-                        id="searchInput" 
-                        class="search-input" 
-                        placeholder="Search the web..." 
-                        autocomplete="off"
-                    >
-                </form>
+
+<!-- ===== INLINE SVG SPRITE (no CDN needed) ===== -->
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+  <!-- Arrow right (search button) -->
+  <symbol id="i-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+  </symbol>
+  <!-- Plus -->
+  <symbol id="i-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+    <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+  </symbol>
+  <!-- X close -->
+  <symbol id="i-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+    <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+  </symbol>
+  <!-- Google (coloured G) -->
+  <symbol id="i-google" viewBox="0 0 24 24">
+    <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+    <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+    <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+    <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+  </symbol>
+  <!-- DuckDuckGo -->
+  <symbol id="i-ddg" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="10" fill="#DE5833"/>
+    <ellipse cx="12" cy="10.5" rx="5" ry="5.5" fill="white"/>
+    <circle cx="14" cy="9" r="1.3" fill="#222"/>
+    <circle cx="14.5" cy="8.6" r="0.45" fill="white"/>
+    <path d="M8.5 13.5 Q12 16.5 15.5 13.5" stroke="#222" stroke-width="0.9" fill="none" stroke-linecap="round"/>
+  </symbol>
+  <!-- GitHub -->
+  <symbol id="i-github" viewBox="0 0 24 24">
+    <path fill="currentColor" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+  </symbol>
+  <!-- YouTube -->
+  <symbol id="i-youtube" viewBox="0 0 24 24">
+    <path fill="#FF0000" d="M23.5 6.2a3 3 0 00-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 00.5 6.2 31 31 0 000 12a31 31 0 00.5 5.8 3 3 0 002.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 002.1-2.1A31 31 0 0024 12a31 31 0 00-.5-5.8z"/>
+    <polygon fill="white" points="9.75,15.5 15.5,12 9.75,8.5"/>
+  </symbol>
+  <!-- Pinterest -->
+  <symbol id="i-pinterest" viewBox="0 0 24 24">
+    <path fill="#E60023" d="M12 0C5.373 0 0 5.372 0 12c0 5.084 3.163 9.426 7.627 11.174-.105-.949-.2-2.405.042-3.441.218-.937 1.407-5.965 1.407-5.965s-.359-.719-.359-1.782c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738a.36.36 0 01.083.345l-.333 1.36c-.053.22-.174.267-.402.161-1.499-.698-2.436-2.889-2.436-4.649 0-3.785 2.75-7.262 7.929-7.262 4.163 0 7.398 2.967 7.398 6.931 0 4.136-2.607 7.464-6.227 7.464-1.216 0-2.359-.632-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0z"/>
+  </symbol>
+  <!-- Perplexity (star) -->
+  <symbol id="i-perplexity" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M12 1.5l2.6 8H23l-6.8 4.9 2.6 8L12 17.5l-6.8 4.9 2.6-8L1 9.5h8.4z"/>
+  </symbol>
+  <!-- ChatGPT (robot head) -->
+  <symbol id="i-chatgpt" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="4" y="7" width="16" height="12" rx="3"/>
+    <circle cx="9" cy="13" r="1.5" fill="currentColor" stroke="none"/>
+    <circle cx="15" cy="13" r="1.5" fill="currentColor" stroke="none"/>
+    <path d="M9 17.5h6"/>
+    <path d="M12 7V3M10 3h4"/>
+    <path d="M2 11h2M20 11h2"/>
+  </symbol>
+  <!-- Qwen (chat bubble) -->
+  <symbol id="i-qwen" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+    <line x1="8" y1="10" x2="16" y2="10"/>
+    <line x1="8" y1="14" x2="12" y2="14"/>
+  </symbol>
+  <!-- AI Studio (sparkle wand) -->
+  <symbol id="i-aistudio" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M9.937 15.5A2 2 0 008.5 14.063l-6.135-1.582a.5.5 0 010-.962L8.5 9.936A2 2 0 009.937 8.5l1.582-6.135a.5.5 0 01.963 0L14.063 8.5A2 2 0 0115.5 9.937l6.135 1.581a.5.5 0 010 .964L15.5 14.063a2 2 0 00-1.437 1.437l-1.582 6.135a.5.5 0 01-.963 0z"/>
+  </symbol>
+  <!-- Cloudflare (simplified flame) -->
+  <symbol id="i-cloudflare" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M16.6 15.5c.4-1.5-.3-2.7-1.6-3.3l-8.4-.1c-.1 0-.2-.1-.2-.2 0-.1 0-.2.2-.2l8.5-.1c1.7-.1 3.5-1.5 4.1-3.2l.5-1.3c0-.2 0-.4-.2-.5A8.9 8.9 0 003.1 10a5.8 5.8 0 00-.1 2C3 15 5 17.5 8 18.5l9.5.1c.2 0 .4-.2.4-.4l.7-2.7zM19 9.5h-.3c-.1 0-.3.1-.3.3l-.4 1.5c-.4 1.5.3 2.7 1.6 3.3l1.4.1c.2 0 .3.1.3.3 0 .1-.1.2-.2.2l-1.5.1c-.2 0-.3.1-.3.2v.9c0 .1.1.2.3.2h.3A4.1 4.1 0 0024 12.4 4.1 4.1 0 0019 9.5z"/>
+  </symbol>
+  <!-- Cloud (Render) -->
+  <symbol id="i-cloud" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M18 10h-1.26A8 8 0 109 20h9a5 5 0 000-10z"/>
+  </symbol>
+  <!-- Zai (Z letter mark) -->
+  <symbol id="i-zai" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="3" y="3" width="18" height="18" rx="5"/>
+    <polyline points="8,8 16,8 8,16 16,16"/>
+  </symbol>
+  <!-- Claude (Anthropic) -->
+  <symbol id="i-claude" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M13.827 3.52l7.863 13.21a1.5 1.5 0 01-1.3 2.27h-3.19l-5.2-8.77-2.31 3.9h3.08l1.45 2.44H5.61a1.5 1.5 0 01-1.3-2.27l7.863-13.21a1.5 1.5 0 012.654.43z"/>
+  </symbol>
+  <!-- Gemini -->
+  <symbol id="i-gemini" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm0-18c-4.418 0-8 3.582-8 8s3.582 8 8 8 8-3.582 8-8-3.582-8-8-8zm0 3.5c.966 3.257 3.243 5.534 6.5 6.5-3.257.966-5.534 3.243-6.5 6.5-.966-3.257-3.243-5.534-6.5-6.5 3.257-.966 5.534-3.243 6.5-6.5z"/>
+  </symbol>
+  <!-- Threads -->
+  <symbol id="i-threads" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M12.186 24h-.007c-3.581-.024-6.334-1.205-8.184-3.509C2.35 18.44 1.5 15.586 1.473 12.01v-.017c.027-3.579.877-6.43 2.525-8.482C5.845 1.205 8.6.024 12.18 0h.014c2.746.02 5.043.725 6.826 2.098 1.677 1.29 2.858 3.13 3.509 5.467l-2.04.569c-1.104-3.96-3.898-5.984-8.304-6.015-2.91.022-5.11.936-6.54 2.717C4.307 6.504 3.616 8.914 3.594 12c.022 3.086.713 5.496 2.051 7.164 1.43 1.783 3.63 2.698 6.54 2.717 2.623-.02 4.358-.631 5.822-2.047 1.535-1.488 1.664-3.31 1.411-4.46-.315-1.456-1.286-2.61-2.828-3.33-.3 2.606-1.698 4.126-4.396 4.555-1.911.302-3.694-.14-4.83-1.188a3.454 3.454 0 01-1.101-2.62c.068-2.757 2.202-4.288 5.974-4.06.7.042 1.37.121 2.006.235-.239-1.48-.942-2.17-2.169-2.17-.698 0-1.327.19-1.793.54l-1.282-1.55c.814-.672 1.933-1.035 3.075-1.035 2.595 0 4.135 1.668 4.395 4.624.217.027.43.057.64.09 2.256.402 3.884 1.868 4.366 3.93.4 1.74.083 4.397-1.99 6.395-1.877 1.814-4.16 2.66-7.17 2.68z"/>
+  </symbol>
+</svg>
+
+<div class="bg-mesh">
+    <div class="mesh-orb orb-1"></div>
+    <div class="mesh-orb orb-2"></div>
+    <div class="mesh-orb orb-3"></div>
+</div>
+
+<div class="page">
+
+    <header class="site-header">
+        <div class="brand">Kira</div>
+        <div class="header-right">
+            <div class="header-time" id="headerTime">--:--</div>
+            <div class="header-date" id="headerDate">--</div>
+        </div>
+    </header>
+
+    <section class="hero">
+        <h1 class="hero-greeting" id="greeting">Good morning, <span>Kira</span></h1>
+
+        <div class="search-wrap">
+            <div class="search-glass">
+                <div class="search-engine-icon" id="engineIcon">
+                    <svg><use href="#i-google"/></svg>
+                </div>
+                <input type="text" id="searchInput" placeholder="Search anything..." autocomplete="off" spellcheck="false"/>
+                <button class="search-submit" id="searchSubmit" aria-label="Search">
+                    <svg><use href="#i-arrow"/></svg>
+                </button>
             </div>
-            
-            <!-- Search Engine Switcher -->
-            <div class="icon-bar" id="engineSwitcher">
-                <div class="icon-container">
-                    <div class="icon active" data-engine="google" data-url="https://www.google.com/search?q=">
-                        <i class="fab fa-google"></i>
-                    </div>
-                </div>
-                <div class="icon-container">
-                    <div class="icon" data-engine="duckduckgo" data-url="https://duckduckgo.com/?q=">
-                        <!-- Fixed DuckDuckGo icon using official duck SVG -->
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/>
-                        </svg>
-                    </div>
-                </div>
-                <div class="icon-container">
-                    <div class="icon" data-engine="github" data-url="https://github.com/search?q=">
-                        <i class="fab fa-github"></i>
-                    </div>
-                </div>
-                <div class="icon-container">
-                    <div class="icon" data-engine="youtube" data-url="https://www.youtube.com/results?search_query=">
-                        <i class="fab fa-youtube"></i>
-                    </div>
-                </div>
-                <div class="icon-container">
-                    <div class="icon" data-engine="pinterest" data-url="https://www.pinterest.com/search/pins/?q=">
-                        <i class="fab fa-pinterest"></i>
-                    </div>
-                </div>
-                <div class="icon-container">
-                    <div class="icon" data-engine="perplexity" data-url="https://www.perplexity.ai/search?q=">
-                        <i class="fas fa-brain"></i>
-                    </div>
-                </div>
+        </div>
+
+        <div class="engine-row" id="engineSwitcher">
+            <div class="engine-chip active" data-url="https://www.google.com/search?q=" data-icon="i-google">
+                <svg><use href="#i-google"/></svg> Google
             </div>
-            
-            <!-- AI Tools -->
-            <div class="icon-bar" id="aiTools">
-                <div class="icon-container">
-                    <div class="icon" data-tool="chatgpt" data-url="https://chat.openai.com">
-                        <i class="fab fa-rocketchat"></i>
-                    </div>
-                </div>
-                <div class="icon-container">
-                    <div class="icon" data-tool="qwen" data-url="https://chat.qwen.ai">
-                        <i class="fas fa-comments"></i>
-                    </div>
-                </div>
-                <div class="icon-container">
-                    <div class="icon" data-tool="google-ai" data-url="https://aistudio.google.com">
-                        <i class="fas fa-robot"></i>
-                    </div>
-                </div>
+            <div class="engine-chip" data-url="https://duckduckgo.com/?q=" data-icon="i-ddg">
+                <svg><use href="#i-ddg"/></svg> DuckDuckGo
             </div>
-            
-            <!-- Social Media Tools -->
-            <div class="icon-bar" id="socialTools">
-                <div class="icon-container">
-                    <div class="icon" data-tool="threads" data-url="https://thread-profile-viewer.onrender.com/">
-                        <span class="letter-icon">T</span>
-                    </div>
-                </div>
+            <div class="engine-chip" data-url="https://github.com/search?q=" data-icon="i-github">
+                <svg><use href="#i-github"/></svg> GitHub
             </div>
-            
-            <!-- Cloud Platforms -->
-            <div class="icon-bar" id="cloudPlatforms">
-                <div class="icon-container">
-                    <div class="icon" data-platform="cloudflare" data-url="https://dash.cloudflare.com">
-                        <i class="fab fa-cloudflare"></i>
-                    </div>
-                </div>
-                <div class="icon-container">
-                    <div class="icon" data-platform="render" data-url="https://dashboard.render.com">
-                        <i class="fas fa-cloud"></i>
-                    </div>
-                </div>
-                <div class="icon-container">
-                    <div class="icon" data-platform="vercel" data-url="https://vercel.com/dashboard">
-                        <span class="letter-icon">V</span>
-                    </div>
-                </div>
-                <div class="icon-container">
-                    <div class="icon" data-platform="netlify" data-url="https://app.netlify.com">
-                        <span class="letter-icon">N</span>
-                    </div>
-                </div>
-                <div class="icon-container">
-                    <div class="icon" data-platform="github" data-url="https://github.com">
-                        <i class="fab fa-github"></i>
-                    </div>
-                </div>
+            <div class="engine-chip" data-url="https://www.youtube.com/results?search_query=" data-icon="i-youtube">
+                <svg><use href="#i-youtube"/></svg> YouTube
             </div>
-        </section>
-        
-        <!-- Productivity Section -->
-        <section class="productivity">
-            <div class="todo-clock-container">
-                <!-- Todo List -->
-                <div class="todo-container">
-                    <div class="todo-header">
-                        <h2 class="todo-title">Todo</h2>
-                    </div>
-                    <div class="todo-input">
-                        <input type="text" id="todoInput" placeholder="Add a new task...">
-                        <button class="add-btn" id="addTodoBtn">
-                            <i class="fas fa-plus"></i>
-                        </button>
-                    </div>
-                    <ul class="todo-list" id="todoList">
-                        <!-- Todo items will be added here dynamically -->
-                    </ul>
-                </div>
-                
-                <!-- Digital Clock -->
-                <div class="clock-container">
-                    <div id="clock" class="clock">00:00:00</div>
-                    <div id="date" class="date">Monday, January 1, 2023</div>
-                </div>
+            <div class="engine-chip" data-url="https://www.pinterest.com/search/pins/?q=" data-icon="i-pinterest">
+                <svg><use href="#i-pinterest"/></svg> Pinterest
             </div>
-        </section>
-        
-        <footer>
-            <p>Minimal Home • Designed with clean aesthetics in mind</p>
-        </footer>
+            <div class="engine-chip" data-url="https://www.perplexity.ai/search?q=" data-icon="i-perplexity">
+                <svg><use href="#i-perplexity"/></svg> Perplexity
+            </div>
+        </div>
+    </section>
+
+    <!-- AI Tools Section -->
+    <section class="shortcuts-section">
+        <div class="section-label">🤖 AI Tools</div>
+        <div class="shortcut-group">
+            <a class="shortcut-btn" href="https://chat.openai.com" target="_blank" rel="noopener">
+                <span class="s-ico"><svg><use href="#i-chatgpt"/></svg></span><span class="s-lbl">ChatGPT</span>
+            </a>
+            <a class="shortcut-btn" href="https://claude.ai" target="_blank" rel="noopener">
+                <span class="s-ico"><svg><use href="#i-claude"/></svg></span><span class="s-lbl">Claude</span>
+            </a>
+            <a class="shortcut-btn" href="https://gemini.google.com" target="_blank" rel="noopener">
+                <span class="s-ico"><svg><use href="#i-gemini"/></svg></span><span class="s-lbl">Gemini</span>
+            </a>
+            <a class="shortcut-btn" href="https://chat.z.ai/" target="_blank" rel="noopener">
+                <span class="s-ico"><svg><use href="#i-zai"/></svg></span><span class="s-lbl">Zai</span>
+            </a>
+            <a class="shortcut-btn" href="https://chat.qwen.ai" target="_blank" rel="noopener">
+                <span class="s-ico"><svg><use href="#i-qwen"/></svg></span><span class="s-lbl">Qwen</span>
+            </a>
+            <a class="shortcut-btn" href="https://aistudio.google.com" target="_blank" rel="noopener">
+                <span class="s-ico"><svg><use href="#i-aistudio"/></svg></span><span class="s-lbl">AI Studio</span>
+            </a>
+            <a class="shortcut-btn" href="https://www.perplexity.ai" target="_blank" rel="noopener">
+                <span class="s-ico"><svg><use href="#i-perplexity"/></svg></span><span class="s-lbl">Perplexity</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- Dev & Cloud Section -->
+    <section class="shortcuts-section" style="margin-top:16px;">
+        <div class="section-label">☁️ Dev & Cloud</div>
+        <div class="shortcut-group">
+            <a class="shortcut-btn" href="https://github.com" target="_blank" rel="noopener">
+                <span class="s-ico"><svg><use href="#i-github"/></svg></span><span class="s-lbl">GitHub</span>
+            </a>
+            <a class="shortcut-btn" href="https://dash.cloudflare.com" target="_blank" rel="noopener">
+                <span class="s-ico"><svg><use href="#i-cloudflare"/></svg></span><span class="s-lbl">Cloudflare</span>
+            </a>
+            <a class="shortcut-btn" href="https://vercel.com/dashboard" target="_blank" rel="noopener">
+                <span class="s-letter">▲</span><span class="s-lbl">Vercel</span>
+            </a>
+            <a class="shortcut-btn" href="https://app.netlify.com" target="_blank" rel="noopener">
+                <span class="s-letter">N</span><span class="s-lbl">Netlify</span>
+            </a>
+            <a class="shortcut-btn" href="https://dashboard.render.com" target="_blank" rel="noopener">
+                <span class="s-ico"><svg><use href="#i-cloud"/></svg></span><span class="s-lbl">Render</span>
+            </a>
+            <div class="group-divider"></div>
+            <a class="shortcut-btn" href="https://thread-profile-viewer.onrender.com/" target="_blank" rel="noopener">
+                <span class="s-ico"><svg><use href="#i-threads"/></svg></span><span class="s-lbl">Threads</span>
+            </a>
+        </div>
+    </section>
+
+    <div class="productivity" style="grid-template-columns:1fr;">
+        <div class="glass-card todo-card">
+            <div class="card-header">
+                <div class="card-title">Tasks</div>
+                <div class="todo-count" id="todoCount">0 tasks</div>
+            </div>
+            <div class="todo-input-row">
+                <input type="text" id="todoInput" placeholder="New task..." autocomplete="off"/>
+                <button class="todo-add-btn" id="addTodoBtn" aria-label="Add task">
+                    <svg><use href="#i-plus"/></svg>
+                </button>
+            </div>
+            <ul class="todo-list" id="todoList"></ul>
+        </div>
     </div>
 
-    <script>
-        // ===== SEARCH FUNCTIONALITY =====
-        document.addEventListener('DOMContentLoaded', function() {
-            // Current search engine
-            let currentEngine = 'google';
-            
-            // Engine configurations
-            const searchEngines = {
-                google: {
-                    name: 'Google',
-                    url: 'https://www.google.com/search?q=',
-                    icon: 'fab fa-google'
-                },
-                duckduckgo: {
-                    name: 'DuckDuckGo',
-                    url: 'https://duckduckgo.com/?q=',
-                    icon: 'duck-icon' // Using custom SVG
-                },
-                github: {
-                    name: 'GitHub',
-                    url: 'https://github.com/search?q=',
-                    icon: 'fab fa-github'
-                },
-                youtube: {
-                    name: 'YouTube',
-                    url: 'https://www.youtube.com/results?search_query=',
-                    icon: 'fab fa-youtube'
-                },
-                pinterest: {
-                    name: 'Pinterest',
-                    url: 'https://www.pinterest.com/search/pins/?q=',
-                    icon: 'fab fa-pinterest'
-                },
-                perplexity: {
-                    name: 'Perplexity',
-                    url: 'https://www.perplexity.ai/search?q=',
-                    icon: 'fas fa-brain'
-                }
-            };
-            
-            // Update active engine
-            function setActiveEngine(engine) {
-                // Update current engine
-                currentEngine = engine;
-                
-                // Update active state on icons
-                document.querySelectorAll('#engineSwitcher .icon').forEach(icon => {
-                    icon.classList.remove('active');
-                    if (icon.dataset.engine === engine) {
-                        icon.classList.add('active');
-                    }
-                });
-            }
-            
-            // Handle engine switcher clicks
-            document.querySelectorAll('#engineSwitcher .icon').forEach(icon => {
-                icon.addEventListener('click', function() {
-                    setActiveEngine(this.dataset.engine);
-                });
-            });
-            
-            // Handle search form submission
-            const searchForm = document.getElementById('searchForm');
-            const searchInput = document.getElementById('searchInput');
-            
-            searchForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                const query = searchInput.value.trim();
-                
-                if (query) {
-                    const engineUrl = document.querySelector(`#engineSwitcher .icon[data-engine="${currentEngine}"]`).dataset.url;
-                    window.location.href = engineUrl + encodeURIComponent(query);
-                }
-            });
-            
-            // Allow search with Enter key
-            searchInput.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    searchForm.submit();
-                }
-            });
-            
-            // ===== TODO LIST FUNCTIONALITY =====
-            const todoInput = document.getElementById('todoInput');
-            const addTodoBtn = document.getElementById('addTodoBtn');
-            const todoList = document.getElementById('todoList');
-            
-            // Load todos from localStorage
-            let todos = JSON.parse(localStorage.getItem('todos')) || [];
-            
-            // Render todos
-            function renderTodos() {
-                todoList.innerHTML = '';
-                
-                if (todos.length === 0) {
-                    todoList.innerHTML = `
-                        <li class="todo-item">
-                            <div class="todo-text" style="color: var(--text-secondary); text-align: center; width: 100%;">
-                                No tasks yet. Add one above!
-                            </div>
-                        </li>
-                    `;
-                    return;
-                }
-                
-                todos.forEach((todo, index) => {
-                    const todoItem = document.createElement('li');
-                    todoItem.className = `todo-item ${todo.completed ? 'completed' : ''}`;
-                    
-                    todoItem.innerHTML = `
-                        <div class="todo-checkbox ${todo.completed ? 'checked' : ''}"></div>
-                        <div class="todo-text">${todo.text}</div>
-                        <button class="delete-btn">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    `;
-                    
-                    // Add event listeners
-                    const checkbox = todoItem.querySelector('.todo-checkbox');
-                    checkbox.addEventListener('click', () => toggleTodo(index));
-                    
-                    const deleteBtn = todoItem.querySelector('.delete-btn');
-                    deleteBtn.addEventListener('click', () => deleteTodo(index));
-                    
-                    todoList.appendChild(todoItem);
-                });
-            }
-            
-            // Add new todo
-            function addTodo() {
-                const text = todoInput.value.trim();
-                if (text) {
-                    todos.push({
-                        text,
-                        completed: false,
-                        createdAt: new Date().toISOString()
-                    });
-                    
-                    saveTodos();
-                    renderTodos();
-                    todoInput.value = '';
-                }
-            }
-            
-            // Toggle todo completion
-            function toggleTodo(index) {
-                todos[index].completed = !todos[index].completed;
-                saveTodos();
-                renderTodos();
-            }
-            
-            // Delete todo
-            function deleteTodo(index) {
-                todos.splice(index, 1);
-                saveTodos();
-                renderTodos();
-            }
-            
-            // Save todos to localStorage
-            function saveTodos() {
-                localStorage.setItem('todos', JSON.stringify(todos));
-            }
-            
-            // Event listeners for todo
-            addTodoBtn.addEventListener('click', addTodo);
-            todoInput.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    addTodo();
-                }
-            });
-            
-            // Initial render
-            renderTodos();
-            
-            // ===== DIGITAL CLOCK =====
-            function updateClock() {
-                const now = new Date();
-                
-                // Format time
-                const hours = now.getHours().toString().padStart(2, '0');
-                const minutes = now.getMinutes().toString().padStart(2, '0');
-                const seconds = now.getSeconds().toString().padStart(2, '0');
-                document.getElementById('clock').textContent = `${hours}:${minutes}:${seconds}`;
-                
-                // Format date
-                const options = { 
-                    weekday: 'long', 
-                    year: 'numeric', 
-                    month: 'long', 
-                    day: 'numeric' 
-                };
-                document.getElementById('date').textContent = now.toLocaleDateString('en-US', options);
-            }
-            
-            // Update clock immediately and then every second
-            updateClock();
-            setInterval(updateClock, 1000);
-            
-            // ===== AI TOOLS, SOCIAL TOOLS & CLOUD PLATFORMS =====
-            // Add click handlers for opening URLs
-            document.querySelectorAll('#aiTools .icon, #socialTools .icon, #cloudPlatforms .icon').forEach(icon => {
-                icon.addEventListener('click', function() {
-                    // Visual feedback
-                    this.style.transform = 'scale(0.95)';
-                    setTimeout(() => {
-                        this.style.transform = '';
-                    }, 150);
-                    
-                    // Open the URL in new tab
-                    const url = this.dataset.url;
-                    if (url) {
-                        window.open(url, '_blank');
-                    }
-                });
-            });
+    <footer class="site-footer">Kira Home &mdash; Stay in flow.</footer>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('searchInput').focus();
+
+    // Greeting
+    const h = new Date().getHours();
+    const g = h<5?'Good night':h<12?'Good morning':h<17?'Good afternoon':h<21?'Good evening':'Good night';
+    document.getElementById('greeting').innerHTML = `${g}, <span>Kira</span>`;
+
+    // Clock → header only
+    function tick() {
+        const n = new Date(), p = x => String(x).padStart(2,'0');
+        document.getElementById('headerTime').textContent = p(n.getHours())+':'+p(n.getMinutes())+':'+p(n.getSeconds());
+        document.getElementById('headerDate').textContent =
+            n.toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short',year:'numeric'});
+    }
+    tick(); setInterval(tick,1000);
+
+    // Engine switcher
+    let currentUrl = 'https://www.google.com/search?q=';
+    document.querySelectorAll('#engineSwitcher .engine-chip').forEach(chip => {
+        chip.addEventListener('click', () => {
+            document.querySelectorAll('#engineSwitcher .engine-chip').forEach(c => c.classList.remove('active'));
+            chip.classList.add('active');
+            currentUrl = chip.dataset.url;
+            document.getElementById('engineIcon').innerHTML = `<svg><use href="#${chip.dataset.icon}"/></svg>`;
+            document.getElementById('searchInput').focus();
         });
-    </script>
+    });
+
+    // Search
+    const go = () => {
+        const q = document.getElementById('searchInput').value.trim();
+        if (q) window.open(currentUrl + encodeURIComponent(q), '_blank');
+    };
+    document.getElementById('searchSubmit').addEventListener('click', go);
+    document.getElementById('searchInput').addEventListener('keydown', e => { if(e.key==='Enter') go(); });
+
+    // Todo
+    let todos = JSON.parse(localStorage.getItem('arynox-todos')||'[]');
+    const save = () => localStorage.setItem('kira-todos', JSON.stringify(todos));
+
+    function render() {
+        const list = document.getElementById('todoList');
+        const count = document.getElementById('todoCount');
+        count.textContent = todos.length===0 ? '0 tasks' : `${todos.filter(t=>!t.done).length}/${todos.length}`;
+        if (!todos.length) { list.innerHTML='<li class="todo-empty">No tasks yet — add one above</li>'; return; }
+        list.innerHTML = '';
+        todos.forEach((t,i) => {
+            const li = document.createElement('li');
+            li.className = `todo-item${t.done?' done':''}`;
+            li.innerHTML = `
+                <div class="todo-check${t.done?' done':''}"></div>
+                <div class="todo-text">${t.text.replace(/</g,'&lt;')}</div>
+                <button class="todo-del" aria-label="Delete"><svg><use href="#i-x"/></svg></button>`;
+            li.querySelector('.todo-check').onclick = () => { todos[i].done=!todos[i].done; save(); render(); };
+            li.querySelector('.todo-del').onclick   = () => { todos.splice(i,1); save(); render(); };
+            list.appendChild(li);
+        });
+    }
+
+    function add() {
+        const inp = document.getElementById('todoInput');
+        const text = inp.value.trim();
+        if (!text) return;
+        todos.push({text,done:false});
+        save(); render();
+        inp.value=''; inp.focus();
+    }
+
+    document.getElementById('addTodoBtn').addEventListener('click', add);
+    document.getElementById('todoInput').addEventListener('keydown', e => { if(e.key==='Enter') add(); });
+    render();
+});
+</script>
 </body>
 </html>
