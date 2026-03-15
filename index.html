@@ -1,155 +1,389 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kira Home</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-    <style>
-        *, *::before, *::after { margin:0;padding:0;box-sizing:border-box; }
-        :root {
-            --accent:#C15F3C; --accent-glow:rgba(193,95,60,0.35); --accent-soft:rgba(193,95,60,0.12);
-            --muted-soft:rgba(177,173,161,0.15);
-            --bg:#0a0a0f; --surface:rgba(255,255,255,0.045); --surface-hover:rgba(255,255,255,0.075);
-            --border:rgba(255,255,255,0.08); --border-accent:rgba(193,95,60,0.3);
-            --text-1:#f0ede8; --text-2:#9a9690; --text-3:#5a5652;
-            --glass-blur:blur(18px) saturate(180%);
-            --radius-sm:10px; --radius-md:16px; --radius-lg:22px; --radius-xl:32px;
-            --ease-spring:cubic-bezier(0.34,1.56,0.64,1); --ease-out:cubic-bezier(0.16,1,0.3,1);
-        }
-        @media (prefers-color-scheme:light) {
-            :root {
-                --bg:#f2ede8; --surface:rgba(255,255,255,0.6); --surface-hover:rgba(255,255,255,0.85);
-                --border:rgba(0,0,0,0.08); --text-1:#1a1714; --text-2:#6b6560; --text-3:#a09890;
-            }
-        }
-        html{height:100%}
-        body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-1);min-height:100vh;overflow-x:hidden;}
-        /* BG */
-        .bg-mesh{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none;}
-        .mesh-orb{position:absolute;border-radius:50%;filter:blur(80px);opacity:0.18;animation:orbFloat 20s ease-in-out infinite;}
-        @media(prefers-color-scheme:light){.mesh-orb{opacity:0.22;}}
-        .orb-1{width:600px;height:600px;background:radial-gradient(circle,#C15F3C,transparent 70%);top:-15%;left:-10%;animation-duration:25s;}
-        .orb-2{width:500px;height:500px;background:radial-gradient(circle,#7c4a8a,transparent 70%);top:20%;right:-15%;animation-duration:30s;animation-delay:-8s;}
-        .orb-3{width:400px;height:400px;background:radial-gradient(circle,#3c6ec1,transparent 70%);bottom:10%;left:30%;animation-duration:22s;animation-delay:-15s;}
-        @keyframes orbFloat{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(40px,-30px) scale(1.05)}66%{transform:translate(-20px,40px) scale(0.95)}}
-        /* LAYOUT */
-        .page{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:0 24px 40px;}
-        /* HEADER */
-        .site-header{width:100%;max-width:860px;display:flex;justify-content:space-between;align-items:center;padding:28px 0 0;opacity:0;animation:slideDown 0.6s var(--ease-out) 0.1s forwards;}
-        .brand{font-family:'Syne',sans-serif;font-weight:800;font-size:1.05rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--accent);}
-        .header-right{display:flex;flex-direction:column;align-items:flex-end;gap:2px;}
-        .header-time{font-family:'DM Mono',monospace;font-size:0.88rem;color:var(--text-2);letter-spacing:0.05em;}
-        .header-date{font-family:'DM Sans',sans-serif;font-size:0.72rem;color:var(--text-3);}
-        /* HERO */
-        .hero{width:100%;max-width:720px;margin-top:clamp(60px,10vh,120px);display:flex;flex-direction:column;align-items:center;gap:28px;opacity:0;animation:fadeUp 0.7s var(--ease-out) 0.25s forwards;}
-        .hero-greeting{font-family:'Syne',sans-serif;font-size:clamp(1.8rem,4vw,2.8rem);font-weight:700;text-align:center;line-height:1.15;}
-        .hero-greeting span{color:var(--accent);}
-        /* SEARCH */
-        .search-wrap{width:100%;position:relative;}
-        .search-glass{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-xl);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);display:flex;align-items:center;padding:6px 6px 6px 18px;gap:12px;transition:border-color 0.25s,box-shadow 0.25s;}
-        .search-glass:focus-within{border-color:var(--border-accent);box-shadow:0 0 0 3px var(--accent-soft),0 8px 32px rgba(0,0,0,0.3);}
-        .search-engine-icon{flex-shrink:0;width:20px;height:20px;display:flex;align-items:center;justify-content:center;color:var(--accent);}
-        .search-engine-icon svg{width:18px;height:18px;}
-        #searchInput{flex:1;background:transparent;border:none;outline:none;font-family:'DM Sans',sans-serif;font-size:1.05rem;color:var(--text-1);padding:14px 0;caret-color:var(--accent);}
-        #searchInput::placeholder{color:var(--text-3);}
-        .search-submit{width:46px;height:46px;border-radius:calc(var(--radius-xl) - 8px);background:var(--accent);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;flex-shrink:0;transition:transform 0.2s var(--ease-spring),box-shadow 0.2s;}
-        .search-submit:hover{transform:scale(1.08);box-shadow:0 4px 20px var(--accent-glow);}
-        .search-submit svg{width:18px;height:18px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;}
-        /* ENGINE CHIPS */
-        .engine-row{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;}
-        .engine-chip{display:flex;align-items:center;gap:7px;padding:7px 14px;border-radius:999px;background:var(--surface);border:1px solid var(--border);color:var(--text-2);font-family:'DM Sans',sans-serif;font-size:0.78rem;font-weight:500;cursor:pointer;backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);transition:all 0.2s var(--ease-out);white-space:nowrap;}
-        .engine-chip:hover{background:var(--surface-hover);color:var(--text-1);}
-        .engine-chip.active{background:var(--accent-soft);border-color:var(--border-accent);color:var(--accent);}
-        .engine-chip svg{width:14px;height:14px;flex-shrink:0;}
-        /* SHORTCUTS */
-        .shortcuts-section{width:100%;max-width:860px;margin-top:48px;opacity:0;animation:fadeUp 0.7s var(--ease-out) 0.45s forwards;}
-        .section-label{font-family:'DM Mono',monospace;font-size:0.68rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-3);margin-bottom:14px;padding-left:2px;}
-        .shortcut-group{display:flex;gap:8px;flex-wrap:wrap;}
-        .shortcut-btn{display:flex;align-items:center;gap:9px;padding:10px 16px;border-radius:var(--radius-md);background:var(--surface);border:1px solid var(--border);color:var(--text-2);font-family:'DM Sans',sans-serif;font-size:0.82rem;font-weight:500;cursor:pointer;text-decoration:none;backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);transition:all 0.2s var(--ease-out);position:relative;overflow:hidden;}
-        .shortcut-btn::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,var(--accent-soft),transparent);opacity:0;transition:opacity 0.2s;}
-        .shortcut-btn:hover{background:var(--surface-hover);border-color:var(--border-accent);color:var(--text-1);transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,0.25);}
-        .shortcut-btn:hover::before{opacity:1;}
-        .shortcut-btn:active{transform:scale(0.97) translateY(0);}
-        .s-ico{width:16px;height:16px;flex-shrink:0;position:relative;z-index:1;display:flex;align-items:center;justify-content:center;color:var(--accent);}
-        .s-ico svg{width:15px;height:15px;}
-        .s-lbl{position:relative;z-index:1;}
-        .s-letter{font-family:'Syne',sans-serif;font-weight:800;font-size:0.95rem;color:var(--accent);position:relative;z-index:1;width:16px;text-align:center;}
-        .group-divider{width:1px;align-self:stretch;background:var(--border);margin:0 4px;}
-        /* PRODUCTIVITY */
-        .productivity{width:100%;max-width:860px;margin-top:24px;display:grid;grid-template-columns:1fr 1fr;gap:16px;opacity:0;animation:fadeUp 0.7s var(--ease-out) 0.6s forwards;}
-        @media(max-width:600px){.productivity{grid-template-columns:1fr;}}
-        .glass-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);padding:22px;position:relative;overflow:hidden;}
-        .glass-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.12),transparent);}
-        /* CLOCK */
-        .clock-card{display:flex;flex-direction:column;justify-content:center;align-items:flex-start;gap:4px;}
-        .clock-label{font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--text-3);}
-        #clock{font-family:'DM Mono',monospace;font-size:clamp(2rem,4vw,2.8rem);font-weight:500;color:var(--text-1);letter-spacing:0.02em;line-height:1;margin:8px 0 6px;}
-        #clock .colon{color:var(--accent);animation:blink 1s step-end infinite;}
-        @keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
-        #date-display{font-size:0.82rem;color:var(--text-2);}
-        /* TODO */
-        .todo-card{display:flex;flex-direction:column;gap:14px;}
-        .card-header{display:flex;justify-content:space-between;align-items:center;}
-        .card-title{font-family:'Syne',sans-serif;font-size:0.9rem;font-weight:700;letter-spacing:0.05em;color:var(--text-1);text-transform:uppercase;}
-        .todo-count{font-family:'DM Mono',monospace;font-size:0.7rem;color:var(--text-3);background:var(--muted-soft);padding:2px 8px;border-radius:999px;}
-        .todo-input-row{display:flex;gap:8px;}
-        .todo-input-row input{flex:1;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:var(--radius-sm);padding:9px 13px;font-family:'DM Sans',sans-serif;font-size:0.85rem;color:var(--text-1);outline:none;transition:border-color 0.2s,box-shadow 0.2s;}
-        @media(prefers-color-scheme:light){.todo-input-row input{background:rgba(0,0,0,0.04);}}
-        .todo-input-row input:focus{border-color:var(--border-accent);box-shadow:0 0 0 2px var(--accent-soft);}
-        .todo-input-row input::placeholder{color:var(--text-3);}
-        .todo-add-btn{width:36px;height:36px;border-radius:var(--radius-sm);background:var(--accent);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;flex-shrink:0;transition:transform 0.2s var(--ease-spring),box-shadow 0.2s;}
-        .todo-add-btn:hover{transform:scale(1.1);box-shadow:0 4px 16px var(--accent-glow);}
-        .todo-add-btn svg{width:16px;height:16px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;}
-        .todo-list{list-style:none;max-height:160px;overflow-y:auto;display:flex;flex-direction:column;gap:4px;}
-        .todo-list::-webkit-scrollbar{width:4px;}
-        .todo-list::-webkit-scrollbar-track{background:transparent;}
-        .todo-list::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
-        .todo-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:var(--radius-sm);transition:background 0.15s;}
-        .todo-item:hover{background:var(--surface-hover);}
-        .todo-check{width:18px;height:18px;border-radius:5px;border:1.5px solid var(--border);flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s var(--ease-spring);}
-        .todo-check.done{background:var(--accent);border-color:var(--accent);}
-        .todo-check.done::after{content:'';width:5px;height:9px;border:2px solid #fff;border-top:none;border-left:none;transform:rotate(45deg) translateY(-1px);display:block;}
-        .todo-text{flex:1;font-size:0.83rem;color:var(--text-2);transition:all 0.2s;}
-        .todo-item.done .todo-text{text-decoration:line-through;color:var(--text-3);}
-        .todo-del{width:22px;height:22px;border-radius:5px;background:transparent;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text-3);opacity:0;transition:all 0.15s;}
-        .todo-item:hover .todo-del{opacity:1;}
-        .todo-del:hover{background:rgba(255,80,80,0.12);color:#ff6060;}
-        .todo-del svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;}
-        .todo-empty{font-size:0.8rem;color:var(--text-3);text-align:center;padding:16px 0;font-style:italic;}
-        /* FOOTER */
-        .site-footer{margin-top:auto;padding-top:40px;font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.1em;color:var(--text-3);text-transform:uppercase;opacity:0;animation:fadeUp 0.6s var(--ease-out) 0.8s forwards;}
-        @keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
-        @keyframes slideDown{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:translateY(0)}}
-        ::selection{background:var(--accent-soft);color:var(--accent);}
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kira Home</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
+<style>
+/* ===================== RESET ===================== */
+*, *::before, *::after { margin:0;padding:0;box-sizing:border-box; }
+
+/* ===================== TOKENS ===================== */
+:root {
+  --accent:#C15F3C; --accent-glow:rgba(193,95,60,0.35); --accent-soft:rgba(193,95,60,0.12);
+  --accent-mid:rgba(193,95,60,0.2);
+  --muted-soft:rgba(177,173,161,0.15);
+  --bg:#0a0a0f; --surface:rgba(255,255,255,0.045); --surface-hover:rgba(255,255,255,0.075);
+  --surface-2:rgba(255,255,255,0.07);
+  --border:rgba(255,255,255,0.08); --border-accent:rgba(193,95,60,0.3);
+  --text-1:#f0ede8; --text-2:#9a9690; --text-3:#5a5652;
+  --glass-blur:blur(18px) saturate(180%);
+  --radius-sm:10px; --radius-md:16px; --radius-lg:22px; --radius-xl:32px;
+  --ease-spring:cubic-bezier(0.34,1.56,0.64,1); --ease-out:cubic-bezier(0.16,1,0.3,1);
+}
+@media (prefers-color-scheme:light) {
+  :root {
+    --bg:#f2ede8; --surface:rgba(255,255,255,0.6); --surface-hover:rgba(255,255,255,0.85);
+    --border:rgba(0,0,0,0.08); --text-1:#1a1714; --text-2:#6b6560; --text-3:#a09890;
+  }
+}
+
+/* ===================== BASE ===================== */
+html{height:100%}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-1);min-height:100vh;overflow-x:hidden;}
+
+/* ===================== BACKGROUND ===================== */
+.bg-mesh{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none;}
+.mesh-orb{position:absolute;border-radius:50%;filter:blur(80px);opacity:0.18;animation:orbFloat 20s ease-in-out infinite;}
+@media(prefers-color-scheme:light){.mesh-orb{opacity:0.22;}}
+.orb-1{width:600px;height:600px;background:radial-gradient(circle,#C15F3C,transparent 70%);top:-15%;left:-10%;animation-duration:25s;}
+.orb-2{width:500px;height:500px;background:radial-gradient(circle,#7c4a8a,transparent 70%);top:20%;right:-15%;animation-duration:30s;animation-delay:-8s;}
+.orb-3{width:400px;height:400px;background:radial-gradient(circle,#3c6ec1,transparent 70%);bottom:10%;left:30%;animation-duration:22s;animation-delay:-15s;}
+@keyframes orbFloat{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(40px,-30px) scale(1.05)}66%{transform:translate(-20px,40px) scale(0.95)}}
+
+/* ===================== HOME LAYOUT ===================== */
+.page{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:0 24px 40px;}
+
+/* HEADER */
+.site-header{width:100%;max-width:860px;display:flex;justify-content:space-between;align-items:center;padding:28px 0 0;opacity:0;animation:slideDown 0.6s var(--ease-out) 0.1s forwards;}
+.brand{font-family:'Syne',sans-serif;font-weight:800;font-size:1.05rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--accent);}
+.header-right{display:flex;flex-direction:column;align-items:flex-end;gap:2px;}
+.header-time{font-family:'DM Mono',monospace;font-size:0.88rem;color:var(--text-2);letter-spacing:0.05em;}
+.header-date{font-family:'DM Sans',sans-serif;font-size:0.72rem;color:var(--text-3);}
+
+/* HERO */
+.hero{width:100%;max-width:720px;margin-top:clamp(60px,10vh,120px);display:flex;flex-direction:column;align-items:center;gap:28px;opacity:0;animation:fadeUp 0.7s var(--ease-out) 0.25s forwards;}
+.hero-greeting{font-family:'Syne',sans-serif;font-size:clamp(1.8rem,4vw,2.8rem);font-weight:700;text-align:center;line-height:1.15;}
+.hero-greeting span{color:var(--accent);}
+
+/* SEARCH */
+.search-wrap{width:100%;position:relative;}
+.search-glass{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-xl);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);display:flex;align-items:center;padding:6px 6px 6px 18px;gap:12px;transition:border-color 0.25s,box-shadow 0.25s;}
+.search-glass:focus-within{border-color:var(--border-accent);box-shadow:0 0 0 3px var(--accent-soft),0 8px 32px rgba(0,0,0,0.3);}
+.search-engine-icon{flex-shrink:0;width:20px;height:20px;display:flex;align-items:center;justify-content:center;color:var(--accent);}
+.search-engine-icon svg{width:18px;height:18px;}
+#searchInput{flex:1;background:transparent;border:none;outline:none;font-family:'DM Sans',sans-serif;font-size:1.05rem;color:var(--text-1);padding:14px 0;caret-color:var(--accent);}
+#searchInput::placeholder{color:var(--text-3);}
+.search-submit{width:46px;height:46px;border-radius:calc(var(--radius-xl) - 8px);background:var(--accent);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;flex-shrink:0;transition:transform 0.2s var(--ease-spring),box-shadow 0.2s;}
+.search-submit:hover{transform:scale(1.08);box-shadow:0 4px 20px var(--accent-glow);}
+.search-submit svg{width:18px;height:18px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;}
+
+/* ENGINE CHIPS */
+.engine-row{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;}
+.engine-chip{display:flex;align-items:center;gap:7px;padding:7px 14px;border-radius:999px;background:var(--surface);border:1px solid var(--border);color:var(--text-2);font-family:'DM Sans',sans-serif;font-size:0.78rem;font-weight:500;cursor:pointer;backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);transition:all 0.2s var(--ease-out);white-space:nowrap;}
+.engine-chip:hover{background:var(--surface-hover);color:var(--text-1);}
+.engine-chip.active{background:var(--accent-soft);border-color:var(--border-accent);color:var(--accent);}
+.engine-chip svg{width:14px;height:14px;flex-shrink:0;}
+
+/* SHORTCUTS */
+.shortcuts-section{width:100%;max-width:860px;margin-top:48px;opacity:0;animation:fadeUp 0.7s var(--ease-out) 0.45s forwards;}
+.section-label{font-family:'DM Mono',monospace;font-size:0.68rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-3);margin-bottom:14px;padding-left:2px;}
+.shortcut-group{display:flex;gap:8px;flex-wrap:wrap;}
+.shortcut-btn{display:flex;align-items:center;gap:9px;padding:10px 16px;border-radius:var(--radius-md);background:var(--surface);border:1px solid var(--border);color:var(--text-2);font-family:'DM Sans',sans-serif;font-size:0.82rem;font-weight:500;cursor:pointer;text-decoration:none;backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);transition:all 0.2s var(--ease-out);position:relative;overflow:hidden;}
+.shortcut-btn::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,var(--accent-soft),transparent);opacity:0;transition:opacity 0.2s;}
+.shortcut-btn:hover{background:var(--surface-hover);border-color:var(--border-accent);color:var(--text-1);transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,0.25);}
+.shortcut-btn:hover::before{opacity:1;}
+.shortcut-btn:active{transform:scale(0.97) translateY(0);}
+.s-ico{width:16px;height:16px;flex-shrink:0;position:relative;z-index:1;display:flex;align-items:center;justify-content:center;color:var(--accent);}
+.s-ico svg{width:15px;height:15px;}
+.s-lbl{position:relative;z-index:1;}
+.s-letter{font-family:'Syne',sans-serif;font-weight:800;font-size:0.95rem;color:var(--accent);position:relative;z-index:1;width:16px;text-align:center;}
+.group-divider{width:1px;align-self:stretch;background:var(--border);margin:0 4px;}
+
+/* PRODUCTIVITY */
+.productivity{width:100%;max-width:860px;margin-top:24px;display:grid;gap:16px;opacity:0;animation:fadeUp 0.7s var(--ease-out) 0.6s forwards;}
+.glass-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);padding:22px;position:relative;overflow:hidden;}
+.glass-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.12),transparent);}
+
+/* TODO */
+.todo-card{display:flex;flex-direction:column;gap:14px;}
+.card-header{display:flex;justify-content:space-between;align-items:center;}
+.card-title{font-family:'Syne',sans-serif;font-size:0.9rem;font-weight:700;letter-spacing:0.05em;color:var(--text-1);text-transform:uppercase;}
+.todo-count{font-family:'DM Mono',monospace;font-size:0.7rem;color:var(--text-3);background:var(--muted-soft);padding:2px 8px;border-radius:999px;}
+.todo-input-row{display:flex;gap:8px;}
+.todo-input-row input{flex:1;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:var(--radius-sm);padding:9px 13px;font-family:'DM Sans',sans-serif;font-size:0.85rem;color:var(--text-1);outline:none;transition:border-color 0.2s,box-shadow 0.2s;}
+@media(prefers-color-scheme:light){.todo-input-row input{background:rgba(0,0,0,0.04);}}
+.todo-input-row input:focus{border-color:var(--border-accent);box-shadow:0 0 0 2px var(--accent-soft);}
+.todo-input-row input::placeholder{color:var(--text-3);}
+.todo-add-btn{width:36px;height:36px;border-radius:var(--radius-sm);background:var(--accent);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;flex-shrink:0;transition:transform 0.2s var(--ease-spring),box-shadow 0.2s;}
+.todo-add-btn:hover{transform:scale(1.1);box-shadow:0 4px 16px var(--accent-glow);}
+.todo-add-btn svg{width:16px;height:16px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;}
+.todo-list{list-style:none;max-height:160px;overflow-y:auto;display:flex;flex-direction:column;gap:4px;}
+.todo-list::-webkit-scrollbar{width:4px;}
+.todo-list::-webkit-scrollbar-track{background:transparent;}
+.todo-list::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+.todo-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:var(--radius-sm);transition:background 0.15s;}
+.todo-item:hover{background:var(--surface-hover);}
+.todo-check{width:18px;height:18px;border-radius:5px;border:1.5px solid var(--border);flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s var(--ease-spring);}
+.todo-check.done{background:var(--accent);border-color:var(--accent);}
+.todo-check.done::after{content:'';width:5px;height:9px;border:2px solid #fff;border-top:none;border-left:none;transform:rotate(45deg) translateY(-1px);display:block;}
+.todo-text{flex:1;font-size:0.83rem;color:var(--text-2);transition:all 0.2s;}
+.todo-item.done .todo-text{text-decoration:line-through;color:var(--text-3);}
+.todo-del{width:22px;height:22px;border-radius:5px;background:transparent;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text-3);opacity:0;transition:all 0.15s;}
+.todo-item:hover .todo-del{opacity:1;}
+.todo-del:hover{background:rgba(255,80,80,0.12);color:#ff6060;}
+.todo-del svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;}
+.todo-empty{font-size:0.8rem;color:var(--text-3);text-align:center;padding:16px 0;font-style:italic;}
+
+/* FOOTER */
+.site-footer{margin-top:auto;padding-top:40px;font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.1em;color:var(--text-3);text-transform:uppercase;opacity:0;animation:fadeUp 0.6s var(--ease-out) 0.8s forwards;}
+
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideDown{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:translateY(0)}}
+::selection{background:var(--accent-soft);color:var(--accent);}
+
+/* ===================== CHAT FAB ===================== */
+.chat-fab {
+  position:fixed; bottom:28px; right:28px; z-index:100;
+  width:54px; height:54px; border-radius:50%;
+  background:var(--accent);
+  border:none; cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  box-shadow:0 4px 24px var(--accent-glow), 0 2px 8px rgba(0,0,0,0.4);
+  transition:transform 0.25s var(--ease-spring), box-shadow 0.25s;
+  color:#fff;
+}
+.chat-fab:hover { transform:scale(1.1); box-shadow:0 6px 32px var(--accent-glow); }
+.chat-fab svg { width:22px; height:22px; stroke:#fff; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; transition:opacity 0.2s, transform 0.2s; }
+.chat-fab .ico-chat { position:absolute; }
+.chat-fab .ico-close { position:absolute; opacity:0; transform:rotate(-90deg); }
+.chat-fab.open .ico-chat { opacity:0; transform:rotate(90deg); }
+.chat-fab.open .ico-close { opacity:1; transform:rotate(0); }
+
+/* Notification dot */
+.chat-fab .notif { position:absolute;top:4px;right:4px;width:10px;height:10px;border-radius:50%;background:#4caf50;border:2px solid var(--bg);display:none; }
+.chat-fab.has-key .notif { display:block; }
+
+/* ===================== CHAT PANEL ===================== */
+.chat-panel {
+  position:fixed; bottom:94px; right:28px; z-index:99;
+  width:min(420px, calc(100vw - 40px));
+  height:min(600px, calc(100vh - 120px));
+  background:rgba(10,10,18,0.92);
+  border:1px solid var(--border);
+  border-radius:24px;
+  backdrop-filter:blur(24px) saturate(200%);
+  -webkit-backdrop-filter:blur(24px) saturate(200%);
+  display:flex; flex-direction:column;
+  overflow:hidden;
+  box-shadow:0 24px 64px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.05);
+  transform:scale(0.92) translateY(16px);
+  opacity:0;
+  pointer-events:none;
+  transition:transform 0.3s var(--ease-spring), opacity 0.25s var(--ease-out);
+  transform-origin:bottom right;
+}
+@media(prefers-color-scheme:light){
+  .chat-panel { background:rgba(242,237,232,0.92); }
+}
+.chat-panel.open {
+  transform:scale(1) translateY(0);
+  opacity:1;
+  pointer-events:all;
+}
+
+/* Panel header */
+.cp-header {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:14px 16px;
+  border-bottom:1px solid var(--border);
+  flex-shrink:0;
+}
+.cp-header-left { display:flex; align-items:center; gap:10px; }
+.cp-brand { font-family:'Syne',sans-serif; font-weight:800; font-size:0.9rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent); }
+.cp-model {
+  font-family:'DM Mono',monospace; font-size:0.65rem; color:var(--text-3);
+  background:var(--surface); border:1px solid var(--border); border-radius:999px;
+  padding:2px 9px; cursor:pointer; transition:all 0.2s; letter-spacing:0.02em;
+}
+.cp-model:hover { border-color:var(--border-accent); color:var(--accent); }
+.cp-actions { display:flex; gap:6px; }
+.cp-btn {
+  width:28px;height:28px;border-radius:7px;
+  background:var(--surface);border:1px solid var(--border);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  color:var(--text-2);transition:all 0.2s;
+}
+.cp-btn:hover{background:var(--surface-hover);border-color:var(--border-accent);color:var(--accent);}
+.cp-btn svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+
+/* API Key row */
+.cp-apirow {
+  padding:10px 14px;
+  border-bottom:1px solid var(--border);
+  display:flex; gap:8px; align-items:center;
+  background:var(--accent-soft);
+  flex-shrink:0;
+}
+.cp-apirow.hidden { display:none; }
+.cp-apirow input {
+  flex:1; background:rgba(255,255,255,0.06); border:1px solid var(--border);
+  border-radius:8px; padding:6px 10px;
+  font-family:'DM Mono',monospace; font-size:0.75rem; color:var(--text-1);
+  outline:none; transition:border-color 0.2s; min-width:0;
+}
+@media(prefers-color-scheme:light){.cp-apirow input{background:rgba(0,0,0,0.06);}}
+.cp-apirow input:focus{border-color:var(--border-accent);}
+.cp-apirow input::placeholder{color:var(--text-3);}
+.cp-save {
+  padding:6px 12px; border-radius:8px;
+  background:var(--accent); border:none; cursor:pointer;
+  font-family:'DM Sans',sans-serif; font-size:0.75rem; font-weight:600; color:#fff;
+  white-space:nowrap; transition:transform 0.2s var(--ease-spring);
+}
+.cp-save:hover{transform:scale(1.04);}
+
+/* Model selector */
+.cp-models {
+  padding:10px 14px;
+  border-bottom:1px solid var(--border);
+  display:none; flex-wrap:wrap; gap:6px;
+  flex-shrink:0;
+}
+.cp-models.open{display:flex;}
+.cp-mopt {
+  padding:4px 12px; border-radius:999px;
+  background:var(--surface);border:1px solid var(--border);
+  font-family:'DM Sans',sans-serif;font-size:0.72rem;color:var(--text-2);
+  cursor:pointer;transition:all 0.15s;
+}
+.cp-mopt:hover{border-color:var(--border-accent);color:var(--text-1);}
+.cp-mopt.active{background:var(--accent-soft);border-color:var(--border-accent);color:var(--accent);}
+
+/* Messages */
+.cp-messages {
+  flex:1; overflow-y:auto; padding:14px;
+  display:flex; flex-direction:column; gap:12px;
+  scrollbar-width:thin; scrollbar-color:var(--border) transparent;
+}
+.cp-messages::-webkit-scrollbar{width:3px;}
+.cp-messages::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+
+/* Welcome */
+.cp-welcome {
+  flex:1; display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  text-align:center; gap:10px; padding:20px;
+  animation:fadeUp 0.4s var(--ease-out) both;
+}
+.cp-welcome-icon {
+  width:44px;height:44px;border-radius:12px;
+  background:var(--accent-soft);border:1px solid var(--border-accent);
+  display:flex;align-items:center;justify-content:center;
+}
+.cp-welcome-icon svg{width:22px;height:22px;stroke:var(--accent);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+.cp-welcome h3{font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;}
+.cp-welcome p{font-size:0.78rem;color:var(--text-2);line-height:1.5;max-width:260px;}
+.cp-chips{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:6px;}
+.cp-chip{padding:5px 12px;border-radius:999px;background:var(--surface);border:1px solid var(--border);font-size:0.72rem;color:var(--text-2);cursor:pointer;transition:all 0.15s;}
+.cp-chip:hover{background:var(--surface-hover);border-color:var(--border-accent);color:var(--text-1);}
+
+/* Message rows */
+.cp-row { display:flex; gap:8px; align-items:flex-start; animation:fadeUp 0.3s var(--ease-out) both; }
+.cp-row.user { flex-direction:row-reverse; }
+.cp-av {
+  width:26px;height:26px;border-radius:7px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Syne',sans-serif;font-size:0.6rem;font-weight:800;letter-spacing:0.03em;
+}
+.cp-av.ai{background:var(--accent-soft);border:1px solid var(--border-accent);color:var(--accent);}
+.cp-av.user{background:var(--surface-2);border:1px solid var(--border);color:var(--text-2);}
+.cp-bubble {
+  max-width:80%; padding:10px 13px;
+  border-radius:14px; font-size:0.82rem; line-height:1.6;
+}
+.cp-bubble.ai{background:var(--surface);border:1px solid var(--border);border-top-left-radius:4px;color:var(--text-1);}
+.cp-bubble.user{background:var(--accent-soft);border:1px solid var(--border-accent);border-top-right-radius:4px;color:var(--text-1);}
+/* Markdown */
+.cp-bubble p{margin-bottom:0.5em;} .cp-bubble p:last-child{margin-bottom:0;}
+.cp-bubble code{font-family:'DM Mono',monospace;font-size:0.78em;background:rgba(255,255,255,0.08);padding:1px 5px;border-radius:4px;color:#e8c49a;}
+.cp-bubble pre{background:rgba(0,0,0,0.4);border:1px solid var(--border);border-radius:8px;padding:10px 12px;overflow-x:auto;margin:6px 0;}
+.cp-bubble pre code{background:none;padding:0;color:#b8d4a8;font-size:0.78rem;}
+.cp-bubble ul,.cp-bubble ol{padding-left:1.2em;margin:4px 0;}
+.cp-bubble li{margin-bottom:2px;}
+.cp-bubble strong{color:var(--text-1);font-weight:600;}
+.cp-bubble a{color:var(--accent);text-decoration:none;}
+.cp-bubble h1,.cp-bubble h2,.cp-bubble h3{font-family:'Syne',sans-serif;font-weight:700;margin:8px 0 3px;font-size:0.9em;}
+.cp-bubble blockquote{border-left:2px solid var(--accent);padding-left:10px;color:var(--text-2);margin:6px 0;}
+
+/* Typing dots */
+.cp-dots{display:flex;gap:4px;align-items:center;padding:3px 0;}
+.cp-dots span{width:6px;height:6px;border-radius:50%;background:var(--accent);opacity:0.4;animation:pulse 1.2s ease-in-out infinite;}
+.cp-dots span:nth-child(2){animation-delay:0.2s;} .cp-dots span:nth-child(3){animation-delay:0.4s;}
+@keyframes pulse{0%,80%,100%{opacity:0.4;transform:scale(1)}40%{opacity:1;transform:scale(1.2)}}
+
+/* Error */
+.cp-error{padding:8px 12px;border-radius:10px;background:rgba(255,80,80,0.08);border:1px solid rgba(255,80,80,0.2);color:#ff8080;font-size:0.78rem;}
+
+/* Input */
+.cp-input-area{flex-shrink:0;padding:10px 12px;border-top:1px solid var(--border);}
+.cp-input-glass{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:16px;display:flex;align-items:flex-end;
+  padding:6px 6px 6px 14px;gap:8px;
+  transition:border-color 0.2s,box-shadow 0.2s;
+}
+.cp-input-glass:focus-within{border-color:var(--border-accent);box-shadow:0 0 0 2px var(--accent-soft);}
+#cpInput{
+  flex:1;background:transparent;border:none;outline:none;resize:none;
+  font-family:'DM Sans',sans-serif;font-size:0.85rem;color:var(--text-1);
+  caret-color:var(--accent);line-height:1.5;max-height:100px;min-height:20px;
+  padding:6px 0;overflow-y:auto;scrollbar-width:none;
+}
+#cpInput::-webkit-scrollbar{display:none;}
+#cpInput::placeholder{color:var(--text-3);}
+.cp-send{
+  width:34px;height:34px;border-radius:10px;
+  background:var(--accent);border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;flex-shrink:0;
+  transition:transform 0.2s var(--ease-spring),box-shadow 0.2s,background 0.2s;
+}
+.cp-send:hover:not(:disabled){transform:scale(1.08);box-shadow:0 4px 14px var(--accent-glow);}
+.cp-send:disabled{background:var(--surface-2);cursor:not-allowed;opacity:0.5;}
+.cp-send svg{width:15px;height:15px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;}
+.cp-hint{font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--text-3);text-align:center;padding:5px 2px 0;}
+</style>
 </head>
 <body>
 
-<!-- ===== INLINE SVG SPRITE (no CDN needed) ===== -->
+<!-- ===== SVG SPRITE ===== -->
 <svg xmlns="http://www.w3.org/2000/svg" style="display:none">
-  <!-- Arrow right (search button) -->
   <symbol id="i-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
     <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
   </symbol>
-  <!-- Plus -->
+  <symbol id="i-up" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/>
+  </symbol>
   <symbol id="i-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
     <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
   </symbol>
-  <!-- X close -->
   <symbol id="i-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
     <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
   </symbol>
-  <!-- Google (coloured G) -->
+  <symbol id="i-chat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+  </symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/>
+  </symbol>
+  <symbol id="i-key" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="8" cy="15" r="4"/><line x1="11.828" y1="11.172" x2="20" y2="3"/><line x1="18" y1="6" x2="21" y2="3"/><line x1="15" y1="6" x2="15" y2="9"/>
+  </symbol>
+  <symbol id="i-sparkle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M9.937 15.5A2 2 0 008.5 14.063l-6.135-1.582a.5.5 0 010-.962L8.5 9.936A2 2 0 009.937 8.5l1.582-6.135a.5.5 0 01.963 0L14.063 8.5A2 2 0 0115.5 9.937l6.135 1.581a.5.5 0 010 .964L15.5 14.063a2 2 0 00-1.437 1.437l-1.582 6.135a.5.5 0 01-.963 0z"/>
+  </symbol>
   <symbol id="i-google" viewBox="0 0 24 24">
     <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
     <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
     <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
     <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
   </symbol>
-  <!-- DuckDuckGo -->
   <symbol id="i-ddg" viewBox="0 0 24 24">
     <circle cx="12" cy="12" r="10" fill="#DE5833"/>
     <ellipse cx="12" cy="10.5" rx="5" ry="5.5" fill="white"/>
@@ -157,268 +391,498 @@
     <circle cx="14.5" cy="8.6" r="0.45" fill="white"/>
     <path d="M8.5 13.5 Q12 16.5 15.5 13.5" stroke="#222" stroke-width="0.9" fill="none" stroke-linecap="round"/>
   </symbol>
-  <!-- GitHub -->
   <symbol id="i-github" viewBox="0 0 24 24">
     <path fill="currentColor" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
   </symbol>
-  <!-- YouTube -->
   <symbol id="i-youtube" viewBox="0 0 24 24">
     <path fill="#FF0000" d="M23.5 6.2a3 3 0 00-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 00.5 6.2 31 31 0 000 12a31 31 0 00.5 5.8 3 3 0 002.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 002.1-2.1A31 31 0 0024 12a31 31 0 00-.5-5.8z"/>
     <polygon fill="white" points="9.75,15.5 15.5,12 9.75,8.5"/>
   </symbol>
-  <!-- Pinterest -->
   <symbol id="i-pinterest" viewBox="0 0 24 24">
     <path fill="#E60023" d="M12 0C5.373 0 0 5.372 0 12c0 5.084 3.163 9.426 7.627 11.174-.105-.949-.2-2.405.042-3.441.218-.937 1.407-5.965 1.407-5.965s-.359-.719-.359-1.782c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738a.36.36 0 01.083.345l-.333 1.36c-.053.22-.174.267-.402.161-1.499-.698-2.436-2.889-2.436-4.649 0-3.785 2.75-7.262 7.929-7.262 4.163 0 7.398 2.967 7.398 6.931 0 4.136-2.607 7.464-6.227 7.464-1.216 0-2.359-.632-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0z"/>
   </symbol>
-  <!-- Perplexity (star) -->
   <symbol id="i-perplexity" viewBox="0 0 24 24" fill="currentColor">
     <path d="M12 1.5l2.6 8H23l-6.8 4.9 2.6 8L12 17.5l-6.8 4.9 2.6-8L1 9.5h8.4z"/>
   </symbol>
-  <!-- ChatGPT (robot head) -->
   <symbol id="i-chatgpt" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
     <rect x="4" y="7" width="16" height="12" rx="3"/>
     <circle cx="9" cy="13" r="1.5" fill="currentColor" stroke="none"/>
     <circle cx="15" cy="13" r="1.5" fill="currentColor" stroke="none"/>
-    <path d="M9 17.5h6"/>
-    <path d="M12 7V3M10 3h4"/>
-    <path d="M2 11h2M20 11h2"/>
+    <path d="M9 17.5h6"/><path d="M12 7V3M10 3h4"/><path d="M2 11h2M20 11h2"/>
   </symbol>
-  <!-- Qwen (chat bubble) -->
   <symbol id="i-qwen" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
     <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
-    <line x1="8" y1="10" x2="16" y2="10"/>
-    <line x1="8" y1="14" x2="12" y2="14"/>
+    <line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="12" y2="14"/>
   </symbol>
-  <!-- AI Studio (sparkle wand) -->
   <symbol id="i-aistudio" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
     <path d="M9.937 15.5A2 2 0 008.5 14.063l-6.135-1.582a.5.5 0 010-.962L8.5 9.936A2 2 0 009.937 8.5l1.582-6.135a.5.5 0 01.963 0L14.063 8.5A2 2 0 0115.5 9.937l6.135 1.581a.5.5 0 010 .964L15.5 14.063a2 2 0 00-1.437 1.437l-1.582 6.135a.5.5 0 01-.963 0z"/>
   </symbol>
-  <!-- Cloudflare (simplified flame) -->
   <symbol id="i-cloudflare" viewBox="0 0 24 24" fill="currentColor">
     <path d="M16.6 15.5c.4-1.5-.3-2.7-1.6-3.3l-8.4-.1c-.1 0-.2-.1-.2-.2 0-.1 0-.2.2-.2l8.5-.1c1.7-.1 3.5-1.5 4.1-3.2l.5-1.3c0-.2 0-.4-.2-.5A8.9 8.9 0 003.1 10a5.8 5.8 0 00-.1 2C3 15 5 17.5 8 18.5l9.5.1c.2 0 .4-.2.4-.4l.7-2.7zM19 9.5h-.3c-.1 0-.3.1-.3.3l-.4 1.5c-.4 1.5.3 2.7 1.6 3.3l1.4.1c.2 0 .3.1.3.3 0 .1-.1.2-.2.2l-1.5.1c-.2 0-.3.1-.3.2v.9c0 .1.1.2.3.2h.3A4.1 4.1 0 0024 12.4 4.1 4.1 0 0019 9.5z"/>
   </symbol>
-  <!-- Cloud (Render) -->
   <symbol id="i-cloud" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
     <path d="M18 10h-1.26A8 8 0 109 20h9a5 5 0 000-10z"/>
   </symbol>
-  <!-- Zai (Z letter mark) -->
   <symbol id="i-zai" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <rect x="3" y="3" width="18" height="18" rx="5"/>
-    <polyline points="8,8 16,8 8,16 16,16"/>
+    <rect x="3" y="3" width="18" height="18" rx="5"/><polyline points="8,8 16,8 8,16 16,16"/>
   </symbol>
-  <!-- Claude (Anthropic) -->
   <symbol id="i-claude" viewBox="0 0 24 24" fill="currentColor">
     <path d="M13.827 3.52l7.863 13.21a1.5 1.5 0 01-1.3 2.27h-3.19l-5.2-8.77-2.31 3.9h3.08l1.45 2.44H5.61a1.5 1.5 0 01-1.3-2.27l7.863-13.21a1.5 1.5 0 012.654.43z"/>
   </symbol>
-  <!-- Gemini -->
   <symbol id="i-gemini" viewBox="0 0 24 24" fill="currentColor">
     <path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm0-18c-4.418 0-8 3.582-8 8s3.582 8 8 8 8-3.582 8-8-3.582-8-8-8zm0 3.5c.966 3.257 3.243 5.534 6.5 6.5-3.257.966-5.534 3.243-6.5 6.5-.966-3.257-3.243-5.534-6.5-6.5 3.257-.966 5.534-3.243 6.5-6.5z"/>
   </symbol>
-  <!-- Threads -->
   <symbol id="i-threads" viewBox="0 0 24 24" fill="currentColor">
     <path d="M12.186 24h-.007c-3.581-.024-6.334-1.205-8.184-3.509C2.35 18.44 1.5 15.586 1.473 12.01v-.017c.027-3.579.877-6.43 2.525-8.482C5.845 1.205 8.6.024 12.18 0h.014c2.746.02 5.043.725 6.826 2.098 1.677 1.29 2.858 3.13 3.509 5.467l-2.04.569c-1.104-3.96-3.898-5.984-8.304-6.015-2.91.022-5.11.936-6.54 2.717C4.307 6.504 3.616 8.914 3.594 12c.022 3.086.713 5.496 2.051 7.164 1.43 1.783 3.63 2.698 6.54 2.717 2.623-.02 4.358-.631 5.822-2.047 1.535-1.488 1.664-3.31 1.411-4.46-.315-1.456-1.286-2.61-2.828-3.33-.3 2.606-1.698 4.126-4.396 4.555-1.911.302-3.694-.14-4.83-1.188a3.454 3.454 0 01-1.101-2.62c.068-2.757 2.202-4.288 5.974-4.06.7.042 1.37.121 2.006.235-.239-1.48-.942-2.17-2.169-2.17-.698 0-1.327.19-1.793.54l-1.282-1.55c.814-.672 1.933-1.035 3.075-1.035 2.595 0 4.135 1.668 4.395 4.624.217.027.43.057.64.09 2.256.402 3.884 1.868 4.366 3.93.4 1.74.083 4.397-1.99 6.395-1.877 1.814-4.16 2.66-7.17 2.68z"/>
   </symbol>
 </svg>
 
+<!-- ===== BACKGROUND ===== -->
 <div class="bg-mesh">
-    <div class="mesh-orb orb-1"></div>
-    <div class="mesh-orb orb-2"></div>
-    <div class="mesh-orb orb-3"></div>
+  <div class="mesh-orb orb-1"></div>
+  <div class="mesh-orb orb-2"></div>
+  <div class="mesh-orb orb-3"></div>
 </div>
 
+<!-- ===== HOME PAGE ===== -->
 <div class="page">
-
-    <header class="site-header">
-        <div class="brand">Kira</div>
-        <div class="header-right">
-            <div class="header-time" id="headerTime">--:--</div>
-            <div class="header-date" id="headerDate">--</div>
-        </div>
-    </header>
-
-    <section class="hero">
-        <h1 class="hero-greeting" id="greeting">Good morning, <span>Kira</span></h1>
-
-        <div class="search-wrap">
-            <div class="search-glass">
-                <div class="search-engine-icon" id="engineIcon">
-                    <svg><use href="#i-google"/></svg>
-                </div>
-                <input type="text" id="searchInput" placeholder="Search anything..." autocomplete="off" spellcheck="false"/>
-                <button class="search-submit" id="searchSubmit" aria-label="Search">
-                    <svg><use href="#i-arrow"/></svg>
-                </button>
-            </div>
-        </div>
-
-        <div class="engine-row" id="engineSwitcher">
-            <div class="engine-chip active" data-url="https://www.google.com/search?q=" data-icon="i-google">
-                <svg><use href="#i-google"/></svg> Google
-            </div>
-            <div class="engine-chip" data-url="https://duckduckgo.com/?q=" data-icon="i-ddg">
-                <svg><use href="#i-ddg"/></svg> DuckDuckGo
-            </div>
-            <div class="engine-chip" data-url="https://github.com/search?q=" data-icon="i-github">
-                <svg><use href="#i-github"/></svg> GitHub
-            </div>
-            <div class="engine-chip" data-url="https://www.youtube.com/results?search_query=" data-icon="i-youtube">
-                <svg><use href="#i-youtube"/></svg> YouTube
-            </div>
-            <div class="engine-chip" data-url="https://www.pinterest.com/search/pins/?q=" data-icon="i-pinterest">
-                <svg><use href="#i-pinterest"/></svg> Pinterest
-            </div>
-            <div class="engine-chip" data-url="https://www.perplexity.ai/search?q=" data-icon="i-perplexity">
-                <svg><use href="#i-perplexity"/></svg> Perplexity
-            </div>
-        </div>
-    </section>
-
-    <!-- AI Tools Section -->
-    <section class="shortcuts-section">
-        <div class="section-label">🤖 AI Tools</div>
-        <div class="shortcut-group">
-            <a class="shortcut-btn" href="https://chat.openai.com" target="_blank" rel="noopener">
-                <span class="s-ico"><svg><use href="#i-chatgpt"/></svg></span><span class="s-lbl">ChatGPT</span>
-            </a>
-            <a class="shortcut-btn" href="https://claude.ai" target="_blank" rel="noopener">
-                <span class="s-ico"><svg><use href="#i-claude"/></svg></span><span class="s-lbl">Claude</span>
-            </a>
-            <a class="shortcut-btn" href="https://gemini.google.com" target="_blank" rel="noopener">
-                <span class="s-ico"><svg><use href="#i-gemini"/></svg></span><span class="s-lbl">Gemini</span>
-            </a>
-            <a class="shortcut-btn" href="https://chat.z.ai/" target="_blank" rel="noopener">
-                <span class="s-ico"><svg><use href="#i-zai"/></svg></span><span class="s-lbl">Zai</span>
-            </a>
-            <a class="shortcut-btn" href="https://chat.qwen.ai" target="_blank" rel="noopener">
-                <span class="s-ico"><svg><use href="#i-qwen"/></svg></span><span class="s-lbl">Qwen</span>
-            </a>
-            <a class="shortcut-btn" href="https://aistudio.google.com" target="_blank" rel="noopener">
-                <span class="s-ico"><svg><use href="#i-aistudio"/></svg></span><span class="s-lbl">AI Studio</span>
-            </a>
-            <a class="shortcut-btn" href="https://www.perplexity.ai" target="_blank" rel="noopener">
-                <span class="s-ico"><svg><use href="#i-perplexity"/></svg></span><span class="s-lbl">Perplexity</span>
-            </a>
-        </div>
-    </section>
-
-    <!-- Dev & Cloud Section -->
-    <section class="shortcuts-section" style="margin-top:16px;">
-        <div class="section-label">☁️ Dev & Cloud</div>
-        <div class="shortcut-group">
-            <a class="shortcut-btn" href="https://github.com" target="_blank" rel="noopener">
-                <span class="s-ico"><svg><use href="#i-github"/></svg></span><span class="s-lbl">GitHub</span>
-            </a>
-            <a class="shortcut-btn" href="https://dash.cloudflare.com" target="_blank" rel="noopener">
-                <span class="s-ico"><svg><use href="#i-cloudflare"/></svg></span><span class="s-lbl">Cloudflare</span>
-            </a>
-            <a class="shortcut-btn" href="https://vercel.com/dashboard" target="_blank" rel="noopener">
-                <span class="s-letter">▲</span><span class="s-lbl">Vercel</span>
-            </a>
-            <a class="shortcut-btn" href="https://app.netlify.com" target="_blank" rel="noopener">
-                <span class="s-letter">N</span><span class="s-lbl">Netlify</span>
-            </a>
-            <a class="shortcut-btn" href="https://dashboard.render.com" target="_blank" rel="noopener">
-                <span class="s-ico"><svg><use href="#i-cloud"/></svg></span><span class="s-lbl">Render</span>
-            </a>
-            <div class="group-divider"></div>
-            <a class="shortcut-btn" href="https://thread-profile-viewer.onrender.com/" target="_blank" rel="noopener">
-                <span class="s-ico"><svg><use href="#i-threads"/></svg></span><span class="s-lbl">Threads</span>
-            </a>
-        </div>
-    </section>
-
-    <div class="productivity" style="grid-template-columns:1fr;">
-        <div class="glass-card todo-card">
-            <div class="card-header">
-                <div class="card-title">Tasks</div>
-                <div class="todo-count" id="todoCount">0 tasks</div>
-            </div>
-            <div class="todo-input-row">
-                <input type="text" id="todoInput" placeholder="New task..." autocomplete="off"/>
-                <button class="todo-add-btn" id="addTodoBtn" aria-label="Add task">
-                    <svg><use href="#i-plus"/></svg>
-                </button>
-            </div>
-            <ul class="todo-list" id="todoList"></ul>
-        </div>
+  <header class="site-header">
+    <div class="brand">Kira</div>
+    <div class="header-right">
+      <div class="header-time" id="headerTime">--:--</div>
+      <div class="header-date" id="headerDate">--</div>
     </div>
+  </header>
 
-    <footer class="site-footer">Kira Home &mdash; Stay in flow.</footer>
+  <section class="hero">
+    <h1 class="hero-greeting" id="greeting">Good morning, <span>Kira</span></h1>
+    <div class="search-wrap">
+      <div class="search-glass">
+        <div class="search-engine-icon" id="engineIcon"><svg><use href="#i-google"/></svg></div>
+        <input type="text" id="searchInput" placeholder="Search anything..." autocomplete="off" spellcheck="false"/>
+        <button class="search-submit" id="searchSubmit" aria-label="Search"><svg><use href="#i-arrow"/></svg></button>
+      </div>
+    </div>
+    <div class="engine-row" id="engineSwitcher">
+      <div class="engine-chip active" data-url="https://www.google.com/search?q=" data-icon="i-google"><svg><use href="#i-google"/></svg> Google</div>
+      <div class="engine-chip" data-url="https://duckduckgo.com/?q=" data-icon="i-ddg"><svg><use href="#i-ddg"/></svg> DuckDuckGo</div>
+      <div class="engine-chip" data-url="https://github.com/search?q=" data-icon="i-github"><svg><use href="#i-github"/></svg> GitHub</div>
+      <div class="engine-chip" data-url="https://www.youtube.com/results?search_query=" data-icon="i-youtube"><svg><use href="#i-youtube"/></svg> YouTube</div>
+      <div class="engine-chip" data-url="https://www.pinterest.com/search/pins/?q=" data-icon="i-pinterest"><svg><use href="#i-pinterest"/></svg> Pinterest</div>
+      <div class="engine-chip" data-url="https://www.perplexity.ai/search?q=" data-icon="i-perplexity"><svg><use href="#i-perplexity"/></svg> Perplexity</div>
+    </div>
+  </section>
+
+  <!-- AI Tools -->
+  <section class="shortcuts-section">
+    <div class="section-label">🤖 AI Tools</div>
+    <div class="shortcut-group">
+      <a class="shortcut-btn" href="https://chat.openai.com" target="_blank" rel="noopener"><span class="s-ico"><svg><use href="#i-chatgpt"/></svg></span><span class="s-lbl">ChatGPT</span></a>
+      <a class="shortcut-btn" href="https://claude.ai" target="_blank" rel="noopener"><span class="s-ico"><svg><use href="#i-claude"/></svg></span><span class="s-lbl">Claude</span></a>
+      <a class="shortcut-btn" href="https://gemini.google.com" target="_blank" rel="noopener"><span class="s-ico"><svg><use href="#i-gemini"/></svg></span><span class="s-lbl">Gemini</span></a>
+      <a class="shortcut-btn" href="https://chat.z.ai/" target="_blank" rel="noopener"><span class="s-ico"><svg><use href="#i-zai"/></svg></span><span class="s-lbl">Zai</span></a>
+      <a class="shortcut-btn" href="https://chat.qwen.ai" target="_blank" rel="noopener"><span class="s-ico"><svg><use href="#i-qwen"/></svg></span><span class="s-lbl">Qwen</span></a>
+      <a class="shortcut-btn" href="https://aistudio.google.com" target="_blank" rel="noopener"><span class="s-ico"><svg><use href="#i-aistudio"/></svg></span><span class="s-lbl">AI Studio</span></a>
+      <a class="shortcut-btn" href="https://www.perplexity.ai" target="_blank" rel="noopener"><span class="s-ico"><svg><use href="#i-perplexity"/></svg></span><span class="s-lbl">Perplexity</span></a>
+    </div>
+  </section>
+
+  <!-- Dev & Cloud -->
+  <section class="shortcuts-section" style="margin-top:16px;">
+    <div class="section-label">☁️ Dev & Cloud</div>
+    <div class="shortcut-group">
+      <a class="shortcut-btn" href="https://github.com" target="_blank" rel="noopener"><span class="s-ico"><svg><use href="#i-github"/></svg></span><span class="s-lbl">GitHub</span></a>
+      <a class="shortcut-btn" href="https://dash.cloudflare.com" target="_blank" rel="noopener"><span class="s-ico"><svg><use href="#i-cloudflare"/></svg></span><span class="s-lbl">Cloudflare</span></a>
+      <a class="shortcut-btn" href="https://vercel.com/dashboard" target="_blank" rel="noopener"><span class="s-letter">▲</span><span class="s-lbl">Vercel</span></a>
+      <a class="shortcut-btn" href="https://app.netlify.com" target="_blank" rel="noopener"><span class="s-letter">N</span><span class="s-lbl">Netlify</span></a>
+      <a class="shortcut-btn" href="https://dashboard.render.com" target="_blank" rel="noopener"><span class="s-ico"><svg><use href="#i-cloud"/></svg></span><span class="s-lbl">Render</span></a>
+      <div class="group-divider"></div>
+      <a class="shortcut-btn" href="https://thread-profile-viewer.onrender.com/" target="_blank" rel="noopener"><span class="s-ico"><svg><use href="#i-threads"/></svg></span><span class="s-lbl">Threads</span></a>
+    </div>
+  </section>
+
+  <!-- Todo -->
+  <div class="productivity" style="grid-template-columns:1fr;">
+    <div class="glass-card todo-card">
+      <div class="card-header">
+        <div class="card-title">Tasks</div>
+        <div class="todo-count" id="todoCount">0 tasks</div>
+      </div>
+      <div class="todo-input-row">
+        <input type="text" id="todoInput" placeholder="New task..." autocomplete="off"/>
+        <button class="todo-add-btn" id="addTodoBtn" aria-label="Add task"><svg><use href="#i-plus"/></svg></button>
+      </div>
+      <ul class="todo-list" id="todoList"></ul>
+    </div>
+  </div>
+
+  <footer class="site-footer">Kira Home &mdash; Stay in flow.</footer>
+</div>
+
+<!-- ===== CHAT FAB ===== -->
+<button class="chat-fab" id="chatFab" title="Kira Chat">
+  <svg class="ico-chat"><use href="#i-chat"/></svg>
+  <svg class="ico-close"><use href="#i-x"/></svg>
+  <div class="notif" id="chatNotif"></div>
+</button>
+
+<!-- ===== CHAT PANEL ===== -->
+<div class="chat-panel" id="chatPanel">
+
+  <!-- Panel Header -->
+  <div class="cp-header">
+    <div class="cp-header-left">
+      <span class="cp-brand">Chat</span>
+      <span class="cp-model" id="cpModelBadge">llama-3.3-70b</span>
+    </div>
+    <div class="cp-actions">
+      <button class="cp-btn" id="cpKeyBtn" title="API Key"><svg><use href="#i-key"/></svg></button>
+      <button class="cp-btn" id="cpClearBtn" title="Clear chat"><svg><use href="#i-trash"/></svg></button>
+    </div>
+  </div>
+
+  <!-- API Key Row -->
+  <div class="cp-apirow" id="cpApiRow">
+    <input type="password" id="cpApiInput" placeholder="sk-or-v1-... OpenRouter key" autocomplete="off" spellcheck="false"/>
+    <button class="cp-save" id="cpSaveBtn">Save</button>
+  </div>
+
+  <!-- Model Selector -->
+  <div class="cp-models" id="cpModels"></div>
+
+  <!-- Messages -->
+  <div class="cp-messages" id="cpMessages">
+    <div class="cp-welcome" id="cpWelcome">
+      <div class="cp-welcome-icon"><svg><use href="#i-sparkle"/></svg></div>
+      <h3>Kira Chat</h3>
+      <p>Free AI via OpenRouter. Add your API key to start.</p>
+      <div class="cp-chips" id="cpChips"></div>
+    </div>
+  </div>
+
+  <!-- Input -->
+  <div class="cp-input-area">
+    <div class="cp-input-glass">
+      <textarea id="cpInput" placeholder="Ask anything..." rows="1"></textarea>
+      <button class="cp-send" id="cpSend" disabled>
+        <svg><use href="#i-up"/></svg>
+      </button>
+    </div>
+    <div class="cp-hint">Enter to send · Shift+Enter new line</div>
+  </div>
+
 </div>
 
 <script>
+/* ===================== HOME PAGE LOGIC ===================== */
 document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('searchInput').focus();
 
-    // Greeting
-    const h = new Date().getHours();
-    const g = h<5?'Good night':h<12?'Good morning':h<17?'Good afternoon':h<21?'Good evening':'Good night';
-    document.getElementById('greeting').innerHTML = `${g}, <span>Kira</span>`;
+  // Auto focus search
+  document.getElementById('searchInput').focus();
 
-    // Clock → header only
-    function tick() {
-        const n = new Date(), p = x => String(x).padStart(2,'0');
-        document.getElementById('headerTime').textContent = p(n.getHours())+':'+p(n.getMinutes())+':'+p(n.getSeconds());
-        document.getElementById('headerDate').textContent =
-            n.toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short',year:'numeric'});
-    }
-    tick(); setInterval(tick,1000);
+  // Greeting
+  const h = new Date().getHours();
+  const g = h<5?'Good night':h<12?'Good morning':h<17?'Good afternoon':h<21?'Good evening':'Good night';
+  document.getElementById('greeting').innerHTML = `${g}, <span>Kira</span>`;
 
-    // Engine switcher
-    let currentUrl = 'https://www.google.com/search?q=';
-    document.querySelectorAll('#engineSwitcher .engine-chip').forEach(chip => {
-        chip.addEventListener('click', () => {
-            document.querySelectorAll('#engineSwitcher .engine-chip').forEach(c => c.classList.remove('active'));
-            chip.classList.add('active');
-            currentUrl = chip.dataset.url;
-            document.getElementById('engineIcon').innerHTML = `<svg><use href="#${chip.dataset.icon}"/></svg>`;
-            document.getElementById('searchInput').focus();
-        });
+  // Clock
+  function tick() {
+    const n = new Date(), p = x => String(x).padStart(2,'0');
+    document.getElementById('headerTime').textContent = p(n.getHours())+':'+p(n.getMinutes())+':'+p(n.getSeconds());
+    document.getElementById('headerDate').textContent =
+      n.toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short',year:'numeric'});
+  }
+  tick(); setInterval(tick,1000);
+
+  // Engine switcher
+  let currentUrl = 'https://www.google.com/search?q=';
+  document.querySelectorAll('#engineSwitcher .engine-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      document.querySelectorAll('#engineSwitcher .engine-chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      currentUrl = chip.dataset.url;
+      document.getElementById('engineIcon').innerHTML = `<svg><use href="#${chip.dataset.icon}"/></svg>`;
+      document.getElementById('searchInput').focus();
     });
+  });
 
-    // Search
-    const go = () => {
-        const q = document.getElementById('searchInput').value.trim();
-        if (q) window.open(currentUrl + encodeURIComponent(q), '_blank');
-    };
-    document.getElementById('searchSubmit').addEventListener('click', go);
-    document.getElementById('searchInput').addEventListener('keydown', e => { if(e.key==='Enter') go(); });
+  // Search
+  const go = () => {
+    const q = document.getElementById('searchInput').value.trim();
+    if (q) window.open(currentUrl + encodeURIComponent(q), '_blank');
+  };
+  document.getElementById('searchSubmit').addEventListener('click', go);
+  document.getElementById('searchInput').addEventListener('keydown', e => { if(e.key==='Enter') go(); });
 
-    // Todo
-    let todos = JSON.parse(localStorage.getItem('arynox-todos')||'[]');
-    const save = () => localStorage.setItem('kira-todos', JSON.stringify(todos));
+  // Todo
+  let todos = JSON.parse(localStorage.getItem('arynox-todos')||'[]');
+  const saveTodos = () => localStorage.setItem('arynox-todos', JSON.stringify(todos));
+  function renderTodos() {
+    const list = document.getElementById('todoList');
+    const count = document.getElementById('todoCount');
+    count.textContent = todos.length===0 ? '0 tasks' : `${todos.filter(t=>!t.done).length}/${todos.length}`;
+    if (!todos.length) { list.innerHTML='<li class="todo-empty">No tasks yet — add one above</li>'; return; }
+    list.innerHTML = '';
+    todos.forEach((t,i) => {
+      const li = document.createElement('li');
+      li.className = `todo-item${t.done?' done':''}`;
+      li.innerHTML = `<div class="todo-check${t.done?' done':''}"></div><div class="todo-text">${t.text.replace(/</g,'&lt;')}</div><button class="todo-del" aria-label="Delete"><svg><use href="#i-x"/></svg></button>`;
+      li.querySelector('.todo-check').onclick = () => { todos[i].done=!todos[i].done; saveTodos(); renderTodos(); };
+      li.querySelector('.todo-del').onclick   = () => { todos.splice(i,1); saveTodos(); renderTodos(); };
+      list.appendChild(li);
+    });
+  }
+  function addTodo() {
+    const inp = document.getElementById('todoInput');
+    const text = inp.value.trim();
+    if (!text) return;
+    todos.push({text,done:false});
+    saveTodos(); renderTodos();
+    inp.value=''; inp.focus();
+  }
+  document.getElementById('addTodoBtn').addEventListener('click', addTodo);
+  document.getElementById('todoInput').addEventListener('keydown', e => { if(e.key==='Enter') addTodo(); });
+  renderTodos();
 
-    function render() {
-        const list = document.getElementById('todoList');
-        const count = document.getElementById('todoCount');
-        count.textContent = todos.length===0 ? '0 tasks' : `${todos.filter(t=>!t.done).length}/${todos.length}`;
-        if (!todos.length) { list.innerHTML='<li class="todo-empty">No tasks yet — add one above</li>'; return; }
-        list.innerHTML = '';
-        todos.forEach((t,i) => {
-            const li = document.createElement('li');
-            li.className = `todo-item${t.done?' done':''}`;
-            li.innerHTML = `
-                <div class="todo-check${t.done?' done':''}"></div>
-                <div class="todo-text">${t.text.replace(/</g,'&lt;')}</div>
-                <button class="todo-del" aria-label="Delete"><svg><use href="#i-x"/></svg></button>`;
-            li.querySelector('.todo-check').onclick = () => { todos[i].done=!todos[i].done; save(); render(); };
-            li.querySelector('.todo-del').onclick   = () => { todos.splice(i,1); save(); render(); };
-            list.appendChild(li);
-        });
+  /* ===================== CHAT LOGIC ===================== */
+
+  const FREE_MODELS = [
+    { id:'meta-llama/llama-3.3-70b-instruct:free', label:'Llama 3.3 70B', badge:'llama-3.3-70b' },
+    { id:'meta-llama/llama-3.1-8b-instruct:free',  label:'Llama 3.1 8B',  badge:'llama-3.1-8b' },
+    { id:'mistralai/mistral-7b-instruct:free',      label:'Mistral 7B',    badge:'mistral-7b' },
+    { id:'google/gemma-3-27b-it:free',              label:'Gemma 3 27B',   badge:'gemma-3-27b' },
+    { id:'deepseek/deepseek-r1:free',               label:'DeepSeek R1',   badge:'deepseek-r1' },
+    { id:'qwen/qwen3-8b:free',                      label:'Qwen3 8B',      badge:'qwen3-8b' },
+  ];
+  const SUGGESTIONS = ['Explain something complex simply','Write a Python script','Best productivity tips','How does this technology work?'];
+
+  let chatApiKey   = localStorage.getItem('arynox-or-key') || '';
+  let chatModelId  = localStorage.getItem('arynox-or-model') || FREE_MODELS[0].id;
+  let chatMessages = [];
+  let chatStreaming = false;
+  let panelOpen    = false;
+
+  // Setup models
+  const modelsWrap = document.getElementById('cpModels');
+  FREE_MODELS.forEach(m => {
+    const btn = document.createElement('div');
+    btn.className = 'cp-mopt' + (m.id===chatModelId?' active':'');
+    btn.textContent = m.label;
+    btn.addEventListener('click', () => {
+      chatModelId = m.id;
+      localStorage.setItem('arynox-or-model', chatModelId);
+      modelsWrap.querySelectorAll('.cp-mopt').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      updateModelBadge();
+      modelsWrap.classList.remove('open');
+    });
+    modelsWrap.appendChild(btn);
+  });
+
+  // Setup suggestion chips
+  const chipsWrap = document.getElementById('cpChips');
+  SUGGESTIONS.forEach(s => {
+    const c = document.createElement('div');
+    c.className = 'cp-chip'; c.textContent = s;
+    c.addEventListener('click', () => {
+      document.getElementById('cpInput').value = s;
+      cpInputChange();
+      document.getElementById('cpInput').focus();
+    });
+    chipsWrap.appendChild(c);
+  });
+
+  function updateModelBadge() {
+    const m = FREE_MODELS.find(x=>x.id===chatModelId)||FREE_MODELS[0];
+    document.getElementById('cpModelBadge').textContent = m.badge;
+  }
+  updateModelBadge();
+
+  function updateApiState() {
+    if (chatApiKey) {
+      document.getElementById('cpApiRow').classList.add('hidden');
+      document.getElementById('chatFab').classList.add('has-key');
+    } else {
+      document.getElementById('cpApiRow').classList.remove('hidden');
+      document.getElementById('chatFab').classList.remove('has-key');
+    }
+    updateCpSend();
+  }
+  if (chatApiKey) document.getElementById('cpApiInput').value = chatApiKey;
+  updateApiState();
+
+  // FAB toggle
+  document.getElementById('chatFab').addEventListener('click', () => {
+    panelOpen = !panelOpen;
+    document.getElementById('chatPanel').classList.toggle('open', panelOpen);
+    document.getElementById('chatFab').classList.toggle('open', panelOpen);
+    if (panelOpen) setTimeout(() => document.getElementById('cpInput').focus(), 300);
+  });
+
+  // Key button
+  document.getElementById('cpKeyBtn').addEventListener('click', () => {
+    document.getElementById('cpApiRow').classList.toggle('hidden');
+    if (!document.getElementById('cpApiRow').classList.contains('hidden'))
+      document.getElementById('cpApiInput').focus();
+  });
+
+  // Model badge toggle
+  document.getElementById('cpModelBadge').addEventListener('click', () => {
+    document.getElementById('cpModels').classList.toggle('open');
+  });
+
+  // Save API key
+  document.getElementById('cpSaveBtn').addEventListener('click', saveApiKey);
+  document.getElementById('cpApiInput').addEventListener('keydown', e => { if(e.key==='Enter') saveApiKey(); });
+  function saveApiKey() {
+    const val = document.getElementById('cpApiInput').value.trim();
+    if (!val) return;
+    chatApiKey = val;
+    localStorage.setItem('arynox-or-key', chatApiKey);
+    updateApiState();
+    showToast('API key saved ✓');
+  }
+
+  // Clear
+  document.getElementById('cpClearBtn').addEventListener('click', () => {
+    chatMessages = [];
+    const msgs = document.getElementById('cpMessages');
+    msgs.innerHTML = '';
+    const w = document.createElement('div');
+    w.className='cp-welcome'; w.id='cpWelcome';
+    w.innerHTML=`<div class="cp-welcome-icon"><svg><use href="#i-sparkle"/></svg></div><h3>Kira Chat</h3><p>Free AI via OpenRouter. Add your API key to start.</p><div class="cp-chips" id="cpChips"></div>`;
+    msgs.appendChild(w);
+    // re-add chips
+    const cw = document.getElementById('cpChips');
+    SUGGESTIONS.forEach(s => {
+      const c=document.createElement('div'); c.className='cp-chip'; c.textContent=s;
+      c.addEventListener('click',()=>{ document.getElementById('cpInput').value=s; cpInputChange(); document.getElementById('cpInput').focus(); });
+      cw.appendChild(c);
+    });
+  });
+
+  // Input auto-resize
+  const cpInput = document.getElementById('cpInput');
+  function cpInputChange() {
+    cpInput.style.height='auto';
+    cpInput.style.height=Math.min(cpInput.scrollHeight,100)+'px';
+    updateCpSend();
+  }
+  cpInput.addEventListener('input', cpInputChange);
+  cpInput.addEventListener('keydown', e => {
+    if (e.key==='Enter' && !e.shiftKey) { e.preventDefault(); if (!document.getElementById('cpSend').disabled) sendChat(); }
+  });
+
+  function updateCpSend() {
+    document.getElementById('cpSend').disabled = !chatApiKey || !cpInput.value.trim() || chatStreaming;
+  }
+
+  document.getElementById('cpSend').addEventListener('click', sendChat);
+
+  async function sendChat() {
+    const text = cpInput.value.trim();
+    if (!text || !chatApiKey || chatStreaming) return;
+
+    // Remove welcome
+    const w = document.getElementById('cpWelcome');
+    if (w) w.remove();
+
+    chatMessages.push({ role:'user', content:text });
+    appendCpMsg('user', text);
+    cpInput.value=''; cpInputChange();
+
+    chatStreaming = true; updateCpSend();
+    const aiRow = appendCpMsg('ai', null);
+    const bubble = aiRow.querySelector('.cp-bubble.ai');
+
+    try {
+      const resp = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+        method:'POST',
+        headers:{
+          'Authorization':`Bearer ${chatApiKey}`,
+          'Content-Type':'application/json',
+          'HTTP-Referer': location.href,
+          'X-Title':'Kira Chat'
+        },
+        body: JSON.stringify({
+          model: chatModelId,
+          messages: chatMessages,
+          stream: true,
+          max_tokens: 2048,
+        })
+      });
+
+      if (!resp.ok) {
+        const err = await resp.json().catch(()=>({}));
+        throw new Error(err?.error?.message || `HTTP ${resp.status}`);
+      }
+
+      const reader = resp.body.getReader();
+      const dec = new TextDecoder();
+      let full = '';
+      bubble.innerHTML = '';
+
+      while (true) {
+        const {done,value} = await reader.read();
+        if (done) break;
+        const lines = dec.decode(value,{stream:true}).split('\n').filter(l=>l.startsWith('data: '));
+        for (const line of lines) {
+          const d = line.slice(6).trim();
+          if (d==='[DONE]') break;
+          try {
+            const delta = JSON.parse(d)?.choices?.[0]?.delta?.content||'';
+            if (delta) { full+=delta; bubble.innerHTML=marked.parse(full); cpScrollBottom(); }
+          } catch{}
+        }
+      }
+      chatMessages.push({role:'assistant',content:full});
+
+    } catch(err) {
+      bubble.innerHTML='';
+      const e=document.createElement('div'); e.className='cp-error';
+      e.textContent='⚠ '+(err.message||'Error. Check API key.');
+      bubble.appendChild(e);
+      chatMessages.pop();
     }
 
-    function add() {
-        const inp = document.getElementById('todoInput');
-        const text = inp.value.trim();
-        if (!text) return;
-        todos.push({text,done:false});
-        save(); render();
-        inp.value=''; inp.focus();
-    }
+    chatStreaming=false; updateCpSend();
+    cpInput.focus();
+  }
 
-    document.getElementById('addTodoBtn').addEventListener('click', add);
-    document.getElementById('todoInput').addEventListener('keydown', e => { if(e.key==='Enter') add(); });
-    render();
+  function appendCpMsg(role, content) {
+    const msgs = document.getElementById('cpMessages');
+    const row = document.createElement('div');
+    row.className = `cp-row ${role}`;
+    const av = document.createElement('div');
+    av.className = `cp-av ${role}`;
+    av.textContent = role==='ai'?'AI':'U';
+    const bubble = document.createElement('div');
+    bubble.className = `cp-bubble ${role}`;
+    if (content===null) {
+      bubble.innerHTML=`<div class="cp-dots"><span></span><span></span><span></span></div>`;
+    } else if (role==='user') {
+      bubble.textContent=content;
+    } else {
+      bubble.innerHTML=marked.parse(content);
+    }
+    if (role==='ai') { row.appendChild(av); row.appendChild(bubble); }
+    else             { row.appendChild(bubble); row.appendChild(av); }
+    msgs.appendChild(row);
+    cpScrollBottom();
+    return row;
+  }
+
+  function cpScrollBottom() {
+    const m=document.getElementById('cpMessages'); m.scrollTop=m.scrollHeight;
+  }
+
+  function showToast(msg) {
+    const t=document.createElement('div');
+    t.style.cssText=`position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:rgba(193,95,60,0.95);color:#fff;padding:7px 16px;border-radius:999px;font-family:'DM Sans',sans-serif;font-size:0.8rem;z-index:200;pointer-events:none;`;
+    t.textContent=msg; document.body.appendChild(t);
+    setTimeout(()=>t.remove(),2000);
+  }
+
 });
 </script>
 </body>
