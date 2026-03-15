@@ -161,7 +161,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-1);m
 
 /* ===================== CHAT PANEL ===================== */
 .chat-panel {
-  position:fixed; bottom:94px; right:28px; z-index:99;
+  position:fixed; bottom:94px; right:28px; z-index:101;
   width:min(420px, calc(100vw - 40px));
   height:min(600px, calc(100vh - 120px));
   background:rgba(10,10,18,0.92);
@@ -175,7 +175,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-1);m
   transform:scale(0.92) translateY(16px);
   opacity:0;
   pointer-events:none;
-  transition:transform 0.3s var(--ease-spring), opacity 0.25s var(--ease-out);
+  visibility:hidden;
+  transition:transform 0.3s var(--ease-spring), opacity 0.25s var(--ease-out), visibility 0s linear 0.3s;
   transform-origin:bottom right;
 }
 @media(prefers-color-scheme:light){
@@ -184,7 +185,9 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-1);m
 .chat-panel.open {
   transform:scale(1) translateY(0);
   opacity:1;
-  pointer-events:all;
+  pointer-events:auto;
+  visibility:visible;
+  transition:transform 0.3s var(--ease-spring), opacity 0.25s var(--ease-out), visibility 0s linear 0s;
 }
 
 /* Panel header */
@@ -404,6 +407,9 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-1);m
   <symbol id="i-perplexity" viewBox="0 0 24 24" fill="currentColor">
     <path d="M12 1.5l2.6 8H23l-6.8 4.9 2.6 8L12 17.5l-6.8 4.9 2.6-8L1 9.5h8.4z"/>
   </symbol>
+  <symbol id="i-bing" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M5 3l3.5 1.3v11.4l4.2-2.4 1.5 2.6-5.7 3.3L5 17.6V3zm7.5 4.5L16 8.9l-2.5 4.3 2.5 1.4-5 3.1V9.2l1.5-.6z"/>
+  </symbol>
   <symbol id="i-chatgpt" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
     <rect x="4" y="7" width="16" height="12" rx="3"/>
     <circle cx="9" cy="13" r="1.5" fill="currentColor" stroke="none"/>
@@ -470,6 +476,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-1);m
       <div class="engine-chip" data-url="https://www.youtube.com/results?search_query=" data-icon="i-youtube"><svg><use href="#i-youtube"/></svg> YouTube</div>
       <div class="engine-chip" data-url="https://www.pinterest.com/search/pins/?q=" data-icon="i-pinterest"><svg><use href="#i-pinterest"/></svg> Pinterest</div>
       <div class="engine-chip" data-url="https://www.perplexity.ai/search?q=" data-icon="i-perplexity"><svg><use href="#i-perplexity"/></svg> Perplexity</div>
+      <div class="engine-chip" data-url="https://www.bing.com/search?q=" data-icon="i-bing"><svg><use href="#i-bing"/></svg> Bing</div>
     </div>
   </section>
 
