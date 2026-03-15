@@ -647,12 +647,16 @@ document.addEventListener('DOMContentLoaded', () => {
   /* ===================== CHAT LOGIC ===================== */
 
   const FREE_MODELS = [
-    { id:'meta-llama/llama-3.3-70b-instruct:free', label:'Llama 3.3 70B', badge:'llama-3.3-70b' },
-    { id:'meta-llama/llama-3.1-8b-instruct:free',  label:'Llama 3.1 8B',  badge:'llama-3.1-8b' },
-    { id:'mistralai/mistral-7b-instruct:free',      label:'Mistral 7B',    badge:'mistral-7b' },
-    { id:'google/gemma-3-27b-it:free',              label:'Gemma 3 27B',   badge:'gemma-3-27b' },
-    { id:'deepseek/deepseek-r1:free',               label:'DeepSeek R1',   badge:'deepseek-r1' },
-    { id:'qwen/qwen3-8b:free',                      label:'Qwen3 8B',      badge:'qwen3-8b' },
+    { id:'meta-llama/llama-3.3-70b-instruct:free',        label:'Llama 3.3 70B',     badge:'llama-3.3-70b' },
+    { id:'meta-llama/llama-3.2-3b-instruct:free',         label:'Llama 3.2 3B',      badge:'llama-3.2-3b' },
+    { id:'mistralai/mistral-7b-instruct:free',             label:'Mistral 7B',        badge:'mistral-7b' },
+    { id:'mistralai/mistral-small-3.1-24b-instruct:free',  label:'Mistral Small 24B', badge:'mistral-small' },
+    { id:'google/gemma-3-27b-it:free',                    label:'Gemma 3 27B',       badge:'gemma-3-27b' },
+    { id:'google/gemma-3-12b-it:free',                    label:'Gemma 3 12B',       badge:'gemma-3-12b' },
+    { id:'qwen/qwen3-8b:free',                            label:'Qwen3 8B',          badge:'qwen3-8b' },
+    { id:'qwen/qwen3-14b:free',                           label:'Qwen3 14B',         badge:'qwen3-14b' },
+    { id:'deepseek/deepseek-v3-base:free',                 label:'DeepSeek V3',       badge:'deepseek-v3' },
+    { id:'microsoft/phi-4-reasoning-plus:free',            label:'Phi-4 Reasoning',   badge:'phi-4' },
   ];
   const SUGGESTIONS = ['Explain something complex simply','Write a Python script','Best productivity tips','How does this technology work?'];
 
@@ -840,8 +844,11 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch(err) {
       bubble.innerHTML='';
       const e=document.createElement('div'); e.className='cp-error';
-      e.textContent='⚠ '+(err.message||'Error. Check API key.');
+      const msg=err.message||'Unknown error';
+      const isProvErr=msg.includes('Provider')||msg.includes('endpoint')||msg.includes('overload')||msg.includes('502')||msg.includes('503');
+      e.innerHTML='<b>⚠ '+msg+'</b>'+( isProvErr ? '<br><small style=\'margin-top:4px;display:block;opacity:0.75\'>Model may be overloaded. <span id=cpSwitch style=\'color:var(--accent);cursor:pointer;text-decoration:underline\'>Switch model ↗</span></small>' : '');
       bubble.appendChild(e);
+      if(isProvErr){setTimeout(()=>{document.getElementById('cpSwitch')?.addEventListener('click',()=>document.getElementById('cpModels').classList.add('open'));},50);}
       chatMessages.pop();
     }
 
