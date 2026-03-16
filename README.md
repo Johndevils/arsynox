@@ -3,6 +3,7 @@
 A clean, minimal, and responsive homepage/dashboard that serves as your personal productivity hub with search capabilities, AI tools access, and productivity features.
 
 ![Minimal Home Dashboard Preview](https://i.ibb.co/Xr6mtrBb/Screenshot-2026-03-16-12-23-43-01-40deb401b9ffe8e1df2f1cc5ba480b12.jpg)
+![Ai Dashboard](https://i.ibb.co/CpYK1X8y/ai.jpg)
 
 ## 🌟 Features
 
