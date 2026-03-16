@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
+
 <style>
 /* ===================== RESET ===================== */
 *, *::before, *::after { margin:0;padding:0;box-sizing:border-box; }
@@ -548,10 +548,15 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-1);m
     </div>
   </div>
 
-  <!-- API Key Row -->
+  <!-- OR API Key Row -->
   <div class="cp-apirow" id="cpApiRow">
     <input type="password" id="cpApiInput" placeholder="sk-or-v1-... OpenRouter key" autocomplete="off" spellcheck="false"/>
     <button class="cp-save" id="cpSaveBtn">Save</button>
+  </div>
+  <!-- HF API Key Row -->
+  <div class="cp-apirow hidden" id="cpHfRow" style="background:rgba(255,155,69,0.08);border-bottom-color:rgba(255,155,69,0.25);">
+    <input type="password" id="cpHfInput" placeholder="hf_... HuggingFace token" autocomplete="off" spellcheck="false" style="border-color:rgba(255,155,69,0.3);"/>
+    <button class="cp-save" id="cpHfSaveBtn" style="background:#ff6b2b;">Save</button>
   </div>
 
   <!-- Model Selector -->
@@ -581,6 +586,31 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-1);m
 </div>
 
 <script>
+/* ===== INLINE MARKDOWN PARSER (no CDN) ===== */
+const marked = { parse: function(src) {
+  if (!src) return '';
+  let out = src;
+  out = out.replace(/```(\w*)\n?([\s\S]*?)```/g, (_, lang, code) =>
+    '<pre><code>' + code.replace(/</g,'&lt;').replace(/>/g,'&gt;').trim() + '</code></pre>');
+  out = out.replace(/`([^`\n]+)`/g, '<code>$1</code>');
+  out = out.replace(/\*\*\*(.+?)\*\*\*/g, '<strong><em>$1</em></strong>');
+  out = out.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  out = out.replace(/\*(.+?)\*/g, '<em>$1</em>');
+  out = out.replace(/^### (.+)$/gm, '<h3>$1</h3>');
+  out = out.replace(/^## (.+)$/gm, '<h2>$1</h2>');
+  out = out.replace(/^# (.+)$/gm, '<h1>$1</h1>');
+  out = out.replace(/^> (.+)$/gm, '<blockquote>$1</blockquote>');
+  out = out.replace(/^\s*[-*+] (.+)$/gm, '<li>$1</li>');
+  out = out.replace(/^\s*\d+\. (.+)$/gm, '<li>$1</li>');
+  out = out.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
+  out = out.replace(/^---$/gm, '<hr>');
+  out = out.split(/\n\n+/).map(p => {
+    p = p.trim(); if (!p) return '';
+    if (/^<(h[1-6]|pre|ul|ol|li|blockquote|hr)/.test(p)) return p;
+    return '<p>' + p.replace(/\n/g,'<br>') + '</p>';
+  }).join('\n');
+  return out;
+}};
 /* ===================== HOME PAGE LOGIC ===================== */
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -653,32 +683,35 @@ document.addEventListener('DOMContentLoaded', () => {
 
   /* ===================== CHAT LOGIC ===================== */
 
+  // Provider: 'or' = OpenRouter, 'hf' = HuggingFace
   const FREE_MODELS = [
-    { id:'meta-llama/llama-3.3-70b-instruct:free',        label:'Llama 3.3 70B',     badge:'llama-3.3-70b' },
-    { id:'meta-llama/llama-3.2-3b-instruct:free',         label:'Llama 3.2 3B',      badge:'llama-3.2-3b' },
-    { id:'mistralai/mistral-7b-instruct:free',             label:'Mistral 7B',        badge:'mistral-7b' },
-    { id:'mistralai/mistral-small-3.1-24b-instruct:free',  label:'Mistral Small 24B', badge:'mistral-small' },
-    { id:'google/gemma-3-27b-it:free',                    label:'Gemma 3 27B',       badge:'gemma-3-27b' },
-    { id:'google/gemma-3-12b-it:free',                    label:'Gemma 3 12B',       badge:'gemma-3-12b' },
-    { id:'qwen/qwen3-8b:free',                            label:'Qwen3 8B',          badge:'qwen3-8b' },
-    { id:'qwen/qwen3-14b:free',                           label:'Qwen3 14B',         badge:'qwen3-14b' },
-    { id:'deepseek/deepseek-v3-base:free',                 label:'DeepSeek V3',       badge:'deepseek-v3' },
-    { id:'microsoft/phi-4-reasoning-plus:free',            label:'Phi-4 Reasoning',   badge:'phi-4' },
+    { id:'meta-llama/llama-3.3-70b-instruct:free',        label:'Llama 3.3 70B',     badge:'llama-3.3-70b',  provider:'or' },
+    { id:'meta-llama/llama-3.2-3b-instruct:free',         label:'Llama 3.2 3B',      badge:'llama-3.2-3b',   provider:'or' },
+    { id:'mistralai/mistral-7b-instruct:free',             label:'Mistral 7B',        badge:'mistral-7b',     provider:'or' },
+    { id:'mistralai/mistral-small-3.1-24b-instruct:free',  label:'Mistral Small 24B', badge:'mistral-small',  provider:'or' },
+    { id:'google/gemma-3-27b-it:free',                    label:'Gemma 3 27B',       badge:'gemma-3-27b',    provider:'or' },
+    { id:'qwen/qwen3-8b:free',                            label:'Qwen3 8B',          badge:'qwen3-8b',       provider:'or' },
+    { id:'deepseek/deepseek-v3-base:free',                 label:'DeepSeek V3',       badge:'deepseek-v3',    provider:'or' },
+    // ── HuggingFace Models ──
+    { id:'mistralai/Mistral-7B-Instruct-v0.3',            label:'HF · Mistral 7B',   badge:'hf·mistral',     provider:'hf' },
+    { id:'meta-llama/Llama-3.2-3B-Instruct',              label:'HF · Llama 3.2 3B', badge:'hf·llama-3.2',   provider:'hf' },
+    { id:'Qwen/Qwen2.5-72B-Instruct',                     label:'HF · Qwen2.5 72B',  badge:'hf·qwen2.5',     provider:'hf' },
+    { id:'microsoft/Phi-3.5-mini-instruct',               label:'HF · Phi-3.5 Mini', badge:'hf·phi-3.5',     provider:'hf' },
   ];
   const SUGGESTIONS = ['Explain something complex simply','Write a Python script','Best productivity tips','How does this technology work?'];
 
   let chatApiKey   = localStorage.getItem('arynox-or-key') || '';
+  let hfApiKey     = localStorage.getItem('arynox-hf-key') || '';
   let chatModelId  = localStorage.getItem('arynox-or-model') || FREE_MODELS[0].id;
   let chatMessages = [];
   let chatStreaming = false;
   let panelOpen    = false;
-
   // Setup models
   const modelsWrap = document.getElementById('cpModels');
   FREE_MODELS.forEach(m => {
     const btn = document.createElement('div');
     btn.className = 'cp-mopt' + (m.id===chatModelId?' active':'');
-    btn.textContent = m.label;
+    btn.innerHTML = m.provider==='hf' ? `${m.label} <span style='font-size:0.6rem;color:#ff9b45;margin-left:3px;'>HF</span>` : m.label;
     btn.addEventListener('click', () => {
       chatModelId = m.id;
       localStorage.setItem('arynox-or-model', chatModelId);
@@ -710,16 +743,25 @@ document.addEventListener('DOMContentLoaded', () => {
   updateModelBadge();
 
   function updateApiState() {
-    if (chatApiKey) {
-      document.getElementById('cpApiRow').classList.add('hidden');
+    const hasAnyKey = chatApiKey || hfApiKey;
+    if (hasAnyKey) {
       document.getElementById('chatFab').classList.add('has-key');
     } else {
-      document.getElementById('cpApiRow').classList.remove('hidden');
       document.getElementById('chatFab').classList.remove('has-key');
+    }
+    // Show/hide api rows based on selected model provider
+    const curModel = FREE_MODELS.find(m => m.id === chatModelId) || FREE_MODELS[0];
+    if (curModel.provider === 'hf') {
+      document.getElementById('cpApiRow').classList.add('hidden');
+      document.getElementById('cpHfRow').classList.toggle('hidden', !!hfApiKey);
+    } else {
+      document.getElementById('cpHfRow').classList.add('hidden');
+      document.getElementById('cpApiRow').classList.toggle('hidden', !!chatApiKey);
     }
     updateCpSend();
   }
   if (chatApiKey) document.getElementById('cpApiInput').value = chatApiKey;
+  if (hfApiKey) document.getElementById('cpHfInput').value = hfApiKey;
   updateApiState();
 
   // FAB toggle
@@ -732,9 +774,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Key button
   document.getElementById('cpKeyBtn').addEventListener('click', () => {
-    document.getElementById('cpApiRow').classList.toggle('hidden');
-    if (!document.getElementById('cpApiRow').classList.contains('hidden'))
-      document.getElementById('cpApiInput').focus();
+    const curModel = FREE_MODELS.find(m => m.id === chatModelId) || FREE_MODELS[0];
+    if (curModel.provider === 'hf') {
+      document.getElementById('cpHfRow').classList.toggle('hidden');
+      if (!document.getElementById('cpHfRow').classList.contains('hidden'))
+        document.getElementById('cpHfInput').focus();
+    } else {
+      document.getElementById('cpApiRow').classList.toggle('hidden');
+      if (!document.getElementById('cpApiRow').classList.contains('hidden'))
+        document.getElementById('cpApiInput').focus();
+    }
   });
 
   // Model badge toggle
@@ -751,7 +800,17 @@ document.addEventListener('DOMContentLoaded', () => {
     chatApiKey = val;
     localStorage.setItem('arynox-or-key', chatApiKey);
     updateApiState();
-    showToast('API key saved ✓');
+    showToast('OpenRouter key saved ✓');
+  }
+  document.getElementById('cpHfSaveBtn').addEventListener('click', saveHfKey);
+  document.getElementById('cpHfInput').addEventListener('keydown', e => { if(e.key==='Enter') saveHfKey(); });
+  function saveHfKey() {
+    const val = document.getElementById('cpHfInput').value.trim();
+    if (!val) return;
+    hfApiKey = val;
+    localStorage.setItem('arynox-hf-key', hfApiKey);
+    updateApiState();
+    showToast('HuggingFace key saved ✓');
   }
 
   // Clear
@@ -773,25 +832,26 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // Input auto-resize
-  const cpInput = document.getElementById('cpInput');
   function cpInputChange() {
-    cpInput.style.height='auto';
-    cpInput.style.height=Math.min(cpInput.scrollHeight,100)+'px';
+    document.getElementById('cpInput').style.height='auto';
+    document.getElementById('cpInput').style.height=Math.min(document.getElementById('cpInput').scrollHeight,100)+'px';
     updateCpSend();
   }
-  cpInput.addEventListener('input', cpInputChange);
-  cpInput.addEventListener('keydown', e => {
+  document.getElementById('cpInput').addEventListener('input', cpInputChange);
+  document.getElementById('cpInput').addEventListener('keydown', e => {
     if (e.key==='Enter' && !e.shiftKey) { e.preventDefault(); if (!document.getElementById('cpSend').disabled) sendChat(); }
   });
 
   function updateCpSend() {
-    document.getElementById('cpSend').disabled = !chatApiKey || !cpInput.value.trim() || chatStreaming;
+    const curMod = FREE_MODELS.find(m => m.id === chatModelId) || FREE_MODELS[0];
+    const hasKey = curMod.provider === 'hf' ? !!hfApiKey : !!chatApiKey;
+    document.getElementById('cpSend').disabled = !hasKey || !document.getElementById('cpInput').value.trim() || chatStreaming;
   }
 
   document.getElementById('cpSend').addEventListener('click', sendChat);
 
   async function sendChat() {
-    const text = cpInput.value.trim();
+    const text = document.getElementById('cpInput').value.trim();
     if (!text || !chatApiKey || chatStreaming) return;
 
     // Remove welcome
@@ -800,20 +860,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
     chatMessages.push({ role:'user', content:text });
     appendCpMsg('user', text);
-    cpInput.value=''; cpInputChange();
+    document.getElementById('cpInput').value=''; cpInputChange();
 
     chatStreaming = true; updateCpSend();
     const aiRow = appendCpMsg('ai', null);
     const bubble = aiRow.querySelector('.cp-bubble.ai');
 
     try {
-      const resp = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+      const curModel = FREE_MODELS.find(m => m.id === chatModelId) || FREE_MODELS[0];
+      const isHF = curModel.provider === 'hf';
+      const apiUrl = isHF
+        ? `https://router.huggingface.co/hf-inference/models/${chatModelId}/v1/chat/completions`
+        : 'https://openrouter.ai/api/v1/chat/completions';
+      const authKey = isHF ? hfApiKey : chatApiKey;
+      const resp = await fetch(apiUrl, {
         method:'POST',
         headers:{
-          'Authorization':`Bearer ${chatApiKey}`,
+          'Authorization':`Bearer ${authKey}`,
           'Content-Type':'application/json',
-          'HTTP-Referer': location.href,
-          'X-Title':'Kira Chat'
+          ...(isHF ? {} : {'HTTP-Referer': location.href, 'X-Title':'Kira Chat'})
         },
         body: JSON.stringify({
           model: chatModelId,
@@ -860,7 +925,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     chatStreaming=false; updateCpSend();
-    cpInput.focus();
+    document.getElementById('cpInput').focus();
   }
 
   function appendCpMsg(role, content) {
